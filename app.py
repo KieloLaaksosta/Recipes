@@ -41,3 +41,8 @@ def login_account():
         return redirect("/")
     else:
         return 'Väärä käyttäjätunnus tai salasana   <a href="/register">yritä uudestaan</a>   <a href="/">palaa alkuun</a>'
+    
+@app.route("/logout")
+def login():
+    del session["username"]
+    return redirect("/")
