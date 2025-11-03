@@ -6,7 +6,7 @@ OTHER = 0
 def query(command: str, *params):
     db = sqlite3.connect("database.db")
     try:
-        result = db.execute(command, [*params])
+        result = db.execute(command, [*params]).fetchall()
         db.commit()
     except sqlite3.IntegrityError as e:
         db.rollback()
