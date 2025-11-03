@@ -14,3 +14,7 @@ def try_create_account(username : str, password : str, password_again : str) -> 
             return (False, "Käyttäjän luonnissa tapahtui virhe.")
         
     return (True, None)
+
+def check_password(username: str, password : str):
+    successfull, password_hash = database.get_password(username)
+    return successfull and check_password_hash(password_hash[0][0], password)

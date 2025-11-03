@@ -27,3 +27,9 @@ def add_account(username: str, hashed_password):
         username, 
         hashed_password
     )
+
+def get_password(username: str):
+    return query(
+        "SELECT PasswordHash FROM Users WHERE username = ?",
+        username, 
+    )
