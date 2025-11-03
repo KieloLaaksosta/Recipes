@@ -14,7 +14,7 @@ def index():
 def register():
     return render_template("register.html")
 
-@app.route("/create", methods=["POST"])
+@app.route("/create_account", methods=["POST"])
 def create():
     username = request.form["username"]
     password = request.form["password"]
