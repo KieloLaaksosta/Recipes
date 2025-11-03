@@ -9,7 +9,7 @@ def try_create_account(username : str, password : str, password_again : str) -> 
     successful, error_reason = database.add_account(username, hash)
     if not successful:
         if error_reason == database.CONSTRAIN_FAILED:
-            return (False, "Käyttäjänimi on jo käytössä. Koita toista nimeä.")
+            return (False, "Tunnus on jo käytössä. Kokeile toista nimeä.")
         else:
             return (False, "Käyttäjän luonnissa tapahtui virhe.")
         
