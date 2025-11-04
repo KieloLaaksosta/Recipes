@@ -6,9 +6,12 @@
 </head>
 
 <body>
+    {% if not session.username %}
     <a href="/register">Luo tunnus</a>
     <a href="/login">Kirjaudu sisään</a>
+    {% else %}
     <a href="/logout">Kirjaudu ulos</a>
+    {% endif %}
 </body>
 
 </html>
