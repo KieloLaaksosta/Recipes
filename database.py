@@ -1,35 +1,42 @@
 import sqlite3
+from flask import g
 
-CONSTRAIN_FAILED = 1
-OTHER = 0
+def last_insert_id():
+    return g.last_insert_id  
 
-def query(command: str, *params):
+def query(query: str, params):
     db = sqlite3.connect("database.db")
     try:
-        result = db.execute(command, [*params]).fetchall()
+        result = db.execute(query, params).fetchall()
         db.commit()
-    except sqlite3.IntegrityError as e:
-        db.rollback()
-        db.close()
-        print(f"Encountered error executing query {command}, with parameters {params}. Error: {e}.")
-        return (False, CONSTRAIN_FAILED)
     except Exception as e:
         db.rollback()
         db.close()
-        print(f"Encountered error executing query {command}, with parameters {params}. Error: {e}.")
-        return (False, OTHER)
+        raise e
     db.close()
-    return (True, result)
+
+    return result
+
+def execute(command: str, params):
+    db = sqlite3.connect("database.db")
+    try:
+        result = db.execute(command, params)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        db.close()
+        raise e
+    g.last_insert_id = result.lastrowid
+    db.close()
 
 def add_account(username: str, hashed_password):
-    return query(
+    execute(
         "INSERT INTO Users (Id, Username, PasswordHash) VALUES (NULL, ?, ?)",
-        username, 
-        hashed_password
+        [username, hashed_password]
     )
 
 def get_password(username: str):
     return query(
         "SELECT PasswordHash FROM Users WHERE username = ?",
-        username, 
+        [username], 
     )

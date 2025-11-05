@@ -1,7 +1,6 @@
 from flask import Flask
 from flask import render_template, request, session, redirect
-import config
-import account
+import config, database, account
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -25,6 +24,7 @@ def create_account():
         return f"VIRHE: {error_msg}" + '   <a href="/register">yritä uudestaan</a>   <a href="/">palaa alkuun</a>'
     
     session["username"] = username
+    session["user_id"] = database.get_user_id(username)
     return redirect("/")
 
 @app.route("/login")
