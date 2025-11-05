@@ -38,6 +38,7 @@ def login_account():
 
     if account.check_password(username, password):
         session["username"] = username
+        session["user_id"] = database.get_user_id(username)
         return redirect("/")
     else:
         return 'Väärä käyttäjätunnus tai salasana   <a href="/register">yritä uudestaan</a>   <a href="/">palaa alkuun</a>'
@@ -45,4 +46,22 @@ def login_account():
 @app.route("/logout")
 def logout():
     del session["username"]
+    return redirect("/")
+
+@app.route("/create_recipe")
+def create_recipe():
+    tags = database.get_available_tags()
+    return render_template("create_recipe.html", available_tags=tags)
+
+@app.route("/add_recipe", methods=["POST"])
+def add_recipe():
+    recipe_name = request.form["recipe_name"]
+    ingredients = request.form["ingredients"]
+    instructions = request.form["instructions"]
+
+    tag_ids = []
+    for (tag_id, _) in database.get_available_tags():
+        tag_ids.append(tag_id)
+
+    database.add_recipe(session["username"], recipe_name, ingredients, instructions, tag_ids)
     return redirect("/")

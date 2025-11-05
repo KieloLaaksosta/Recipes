@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Lisää resepti</title>
+</head>
+
+<body>
+  <form action="/add_recipe" method="post">
+    <p>
+      Reseptin nimi: <br />
+      <input type="text" name="recipe_name" />
+    </p>
+    <p>
+      Raaka-aineet (esim. 1dl maitoa, 8dl jauhoja): <br />
+      <textarea rows="10" cols="80" name="ingredients"></textarea>
+    </p>
+    <p>
+      Ohjeet (esim. aseta uuni 200 lämpöön, sekoita kuiva-aineet): <br />
+      <textarea rows="10" cols="80" name="instructions"></textarea>
+    </p>
+    <p>
+      {% for tag in available_tags %}
+      <input type="checkbox" name="tags" value="{{ tag[0] }}" />{{ tag[1] }}
+      {% endfor %}
+    </p>
+    <p>
+      <input type="submit" value="Lisää resepti" />
+    </p>
+  </form>
+</body>
+
+</html>

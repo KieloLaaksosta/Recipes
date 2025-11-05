@@ -6,11 +6,16 @@
 </head>
 
 <body>
-    {% if not session.username %}
-    <a href="/register">Luo tunnus</a>
-    <a href="/login">Kirjaudu sisään</a>
-    {% else %}
-    <a href="/logout">Kirjaudu ulos</a>
+    <p>
+        {% if not session.username %}
+        <a href="/register">Luo tunnus</a>
+        <a href="/login">Kirjaudu sisään</a>
+        {% else %}
+        <a href="/logout">Kirjaudu ulos</a>
+        {% endif %}
+    </p>
+    {% if session.username %}
+    <p><a href="/create_recipe">Lisää resepti</a></p>
     {% endif %}
 </body>
 
