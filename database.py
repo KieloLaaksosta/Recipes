@@ -4,8 +4,28 @@ from flask import g
 def last_insert_id():
     return g.last_insert_id  
 
-def query(query: str, params):
+def get_connection():
     db = sqlite3.connect("database.db")
+    db.execute("PRAGMA foreign_keys = ON")
+    db.row_factory = sqlite3.Row
+
+    return db
+
+def execute(query: str, params):
+    db = get_connection()
+    try:
+        result = db.execute(query, params)
+        g.last_insert_id = result.lastrowid
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        db.close()
+        raise e
+
+    db.close()
+
+def query(query: str, params):
+    db = get_connection()
     try:
         result = db.execute(query, params).fetchall()
         db.commit()
@@ -17,17 +37,9 @@ def query(query: str, params):
 
     return result
 
-def execute(command: str, params):
-    db = sqlite3.connect("database.db")
-    try:
-        result = db.execute(command, params)
-        db.commit()
-    except Exception as e:
-        db.rollback()
-        db.close()
-        raise e
-    g.last_insert_id = result.lastrowid
-    db.close()
+def get_placeholders(n: int) -> str:
+    placeholders = ["?"] * n
+    return ", ".join(placeholders)
 
 def add_account(username: str, hashed_password):
     execute(
@@ -47,7 +59,7 @@ def get_user_id(username: str):
         [username], 
     )
 
-def add_recipe(creator, recipe_name: str, ingredients: str, instructions: str, tags: list):
+def add_recipe(creator, recipe_name: str, ingredients: str, instructions: str, tag_ids: list):
     execute(
         """
         INSERT INTO Recipes (Id, Name, CreatorId, Instructions, Ingredients)
@@ -56,7 +68,7 @@ def add_recipe(creator, recipe_name: str, ingredients: str, instructions: str, t
         [recipe_name, creator, ingredients, instructions]
     )
     
-    for tag in tags:
+    for tag in tag_ids:
         execute(
             """
             INSERT INTO TagJoin (RecipeId, TagId)

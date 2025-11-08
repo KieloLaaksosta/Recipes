@@ -24,7 +24,7 @@ def create_account():
         return f"VIRHE: {error_msg}" + '   <a href="/register">yritä uudestaan</a>   <a href="/">palaa alkuun</a>'
     
     session["username"] = username
-    session["user_id"] = database.get_user_id(username)
+    session["user_id"] = database.get_user_id(username)[0]["Id"]
     return redirect("/")
 
 @app.route("/login")
@@ -38,7 +38,7 @@ def login_account():
 
     if account.check_password(username, password):
         session["username"] = username
-        session["user_id"] = database.get_user_id(username)
+        session["user_id"] = database.get_user_id(username)[0]["Id"]
         return redirect("/")
     else:
         return 'Väärä käyttäjätunnus tai salasana   <a href="/login">yritä uudestaan</a>   <a href="/">palaa alkuun</a>'
@@ -59,9 +59,7 @@ def add_recipe():
     ingredients = request.form["ingredients"]
     instructions = request.form["instructions"]
 
-    tag_ids = []
-    for (tag_id, _) in database.get_available_tags():
-        tag_ids.append(tag_id)
+    tag_names = request.form.getlist("tags")
 
-    database.add_recipe(session["username"], recipe_name, ingredients, instructions, tag_ids)
+    database.add_recipe(session["user_id"], recipe_name, ingredients, instructions, tag_names)
     return redirect("/")
