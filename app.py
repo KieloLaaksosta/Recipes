@@ -41,7 +41,7 @@ def login_account():
         session["user_id"] = database.get_user_id(username)
         return redirect("/")
     else:
-        return 'Väärä käyttäjätunnus tai salasana   <a href="/register">yritä uudestaan</a>   <a href="/">palaa alkuun</a>'
+        return 'Väärä käyttäjätunnus tai salasana   <a href="/login">yritä uudestaan</a>   <a href="/">palaa alkuun</a>'
     
 @app.route("/logout")
 def logout():
