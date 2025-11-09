@@ -74,7 +74,7 @@ def add_recipe(creator, recipe_name: str, ingredients: str, instructions: str, t
             INSERT INTO TagJoin (RecipeId, TagId)
             VALUES (?, ?)
             """,
-            [last_insert_id(), tag]
+            [recipe_id, tag]
         )
 
 def get_available_tags():
