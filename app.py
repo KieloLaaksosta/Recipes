@@ -63,3 +63,16 @@ def add_recipe():
 
     database.add_recipe(session["user_id"], recipe_name, ingredients, instructions, tag_names)
     return redirect("/")
+
+@app.route("/search_recipe")
+def search_recipe():
+    tags = database.get_available_tags()
+    return render_template("search_recipe.html", available_tags=tags)
+
+@app.route("/query_recipes", methods=["POST"])
+def query_recipes():
+    search = request.form["search"]
+    tag_names = request.form.getlist("tags")
+
+    results = database.query_recipes(search, tag_names)
+    return render_template("search_results.html", found_recipes = len(results), recipes=results)

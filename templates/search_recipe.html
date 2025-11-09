@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Etsi reseptejä</title>
+</head>
+
+<body>
+  <form action="/query_recipes" method="post">
+    <p>
+      Hakusana (alaviiva [_] hakee mitä tahansa merkkiä ja prosentti merkki [%] miten tahansa monta mitä tahansa merkkiä): <br />
+      <input type="text" name="search" />
+    </p>
+    <h4>Näytä vain respetit joilla on tunnisteet:</h4>
+    <p>
+      {% for tag in available_tags %}
+      <input type="checkbox" name="tags" value="{{ tag.id }}" />{{ tag.name }}
+      {% endfor %}
+    </p>
+    <p>
+      <input type="submit" value="Hae" />
+    </p>
+  </form>
+</body>
+
+</html>
