@@ -8,7 +8,7 @@
 <body>
   {% if found_recipes %}
   {% for recipe in recipes %}
-  <h1><a href="/Recipes/{{recipe.Id}}">{{recipe.Name}}</a> by <a href="/Users/{{recipe.CreatorId}}">{{recipe.CreatorName}}</a></h1>
+  <h1><a href="/recipes/{{recipe.Id}}">{{recipe.Name}}</a> by <a href="/users/{{recipe.CreatorId}}">{{recipe.CreatorName}}</a></h1>
   {% endfor %}
   {% else %}
   <h1>Reseptejä ei löytynt. <a href="/search_recipe">Kokeile toista hakua</a>. </h1>

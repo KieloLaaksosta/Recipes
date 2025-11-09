@@ -1,0 +1,12 @@
+<h1>{{recipe.Name}}</h1>
+<p><a href="/{{user_id}}">{{recipe.CreatorName}}</a></p>
+<h2>Raaka-aineet</h2>
+<p>{{recipe.Ingredients}}</p>
+<h2>Ohjeet</h2>
+<p>{{recipe.Instructions}}</p>
+<h4>Tunnisteet</h4>
+<p>
+  {% for tag_name in tag_names %}
+  <li>{{tag_name}}</li>
+  {% endfor %}
+</p>

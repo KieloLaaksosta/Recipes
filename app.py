@@ -76,3 +76,10 @@ def query_recipes():
 
     results = database.query_recipes(search, tag_names)
     return render_template("search_results.html", found_recipes = len(results), recipes=results)
+
+@app.route("/recipes/<int:recipe_id>", methods=["GET"])
+def show_recipe(recipe_id):
+    recipes, tag_names = database.get_recipe(recipe_id)
+    if(len(recipes) < 1):
+        return "Reseptiä ei löytynyt."
+    return render_template("recipe.html", recipe=recipes[0], tag_names=tag_names)

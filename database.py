@@ -118,3 +118,36 @@ def query_recipes(search: str, tag_ids: list):
         """,
         3 * [search] + tag_ids + [len(tag_ids)]
     )
+
+def get_recipe(recipe_id : int):
+    recipe = query(
+        """
+        SELECT
+            R.Id, R.Name, R.Ingredients, R.Instructions, U.Username As CreatorName, U.Id As CreatorId
+        FROM 
+            Recipes AS R
+            JOIN Users AS U ON U.Id = R.CreatorId
+        WHERE 
+            R.Id = ?
+        """,
+        [recipe_id]
+    )
+
+    tags = query(
+        """
+        SELECT 
+            T.Name As TagName
+        FROM  
+            Tags AS T
+            JOIN TagJoin AS TJ ON T.Id = TJ.TagId
+        WHERE
+            TJ.RecipeId = ?
+        """,
+        [recipe_id]
+        )
+    
+    tag_names = []
+    for row in tags:
+        tag_names.append(row["TagName"])
+    
+    return (recipe, tag_names)
