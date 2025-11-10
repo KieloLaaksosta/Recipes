@@ -17,3 +17,5 @@ dependencies = [
     "MarkupSafe",
     "Werkzeug"
 ]
+[tool.setuptools.packages.find]
+where = ["."]
