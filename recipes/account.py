@@ -1,6 +1,6 @@
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
-import database
+from . import database
 
 def try_create_account(username : str, password : str, password_again : str) -> tuple:
     if password != password_again:

@@ -1,6 +1,6 @@
 from flask import Flask
 from flask import render_template, request, session, redirect
-import config, database, account
+from . import config, database, account
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
