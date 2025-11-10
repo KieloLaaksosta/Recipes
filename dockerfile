@@ -21,10 +21,12 @@ COPY --from=build /app/dist/*.whl .
 RUN apt-get update
 RUN apt-get install -y sqlite3
 COPY --from=build /app/database.db .
+COPY --from=build /app/recipes/templates ./recipes/templates/
 
 RUN pip install *.whl
 
 RUN pip install waitress
 
+EXPOSE 8080
 ENTRYPOINT ["waitress-serve"]
 CMD ["--call", "recipes:create_app"]
