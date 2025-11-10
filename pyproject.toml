@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "recipes"
+version = "1.0.0"
+description = "A flask based web application for university course"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "blinker",
+    "click",
+    "Flask",
+    "itsdangerous",
+    "Jinja2",
+    "MarkupSafe",
+    "Werkzeug"
+]
