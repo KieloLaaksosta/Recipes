@@ -1,0 +1,12 @@
+<h1>{{user_info.Username}}</h1>
+<h2>Reseptit</h2>
+{% if user_info.RecipeCount == 1 %}
+<p>Käyttäjällä {{user_info.Username}} on yksi resepti</p>
+{% elif user_info.RecipeCount == 0 %}
+<p>Käyttäjä ei ole lisännyt reseptejä.</p>
+{% else %}
+<p>Käyttäjällä {{user_info.Username}} on {{user_info.RecipeCount}} reseptiä</p>
+{% endif %}
+{% for recipe in recipes %}
+<h3><a href="/recipes/{{recipe.RecipeId}}">{{recipe.RecipeName}}</a></h3>
+{% endfor %}
