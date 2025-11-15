@@ -1,3 +1,12 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>{{user_info.Username}}</title>
+</head>
+
+<body>
+<p><a href="/">Etusivulle</a></p>
 <h1>{{user_info.Username}}</h1>
 <h2>Reseptit</h2>
 {% if user_info.RecipeCount == 1 %}
@@ -10,3 +19,4 @@
 {% for recipe in recipes %}
 <h3><a href="/recipes/{{recipe.RecipeId}}">{{recipe.RecipeName}}</a></h3>
 {% endfor %}
+</body>

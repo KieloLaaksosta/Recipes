@@ -1,12 +1,22 @@
-<h1>{{recipe.Name}}</h1>
-<p><a href="/users/{{recipe.CreatorId}}">{{recipe.CreatorName}}</a></p>
-<h2>Raaka-aineet</h2>
-<p>{{recipe.Ingredients}}</p>
-<h2>Ohjeet</h2>
-<p>{{recipe.Instructions}}</p>
-<h4>Tunnisteet</h4>
-<p>
-  {% for tag_name in tag_names %}
-  <li>{{tag_name}}</li>
-  {% endfor %}
-</p>
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>{{recipe.Name}}</title>
+</head>
+
+<body>
+  <p><a href="/">Etusivulle</a></p>
+  <h1>{{recipe.Name}}</h1>
+  <p><a href="/users/{{recipe.CreatorId}}">{{recipe.CreatorName}}</a></p>
+  <h2>Raaka-aineet</h2>
+  <p>{{recipe.Ingredients}}</p>
+  <h2>Ohjeet</h2>
+  <p>{{recipe.Instructions}}</p>
+  <h4>Tunnisteet</h4>
+  <p>
+    {% for tag_name in tag_names %}
+    <li>{{tag_name}}</li>
+    {% endfor %}
+  </p>
+</body>

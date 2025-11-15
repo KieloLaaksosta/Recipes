@@ -6,6 +6,7 @@
 </head>
 
 <body>
+  <p><a href="/">Etusivulle</a></p>
   {% if found_recipes %}
   {% for recipe in recipes %}
   <h1><a href="/recipes/{{recipe.Id}}">{{recipe.Name}}</a> by <a href="/users/{{recipe.CreatorId}}">{{recipe.CreatorName}}</a></h1>
