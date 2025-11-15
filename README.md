@@ -13,19 +13,19 @@
 
 Asenna `flask`-kirjasto:
 
-```
+```bash
 $ pip install flask
 ```
 
 Luo tietokannan taulut ja lisää alkutiedot:
 
-```
+```bash
 $ sqlite3 database.db < schema.sql
 $ sqlite3 database.db < init.sql
 ```
 
 Voit käynnistää sovelluksen näin:
 
-```
+```bash
 $ flask run
 ```
