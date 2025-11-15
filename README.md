@@ -1,4 +1,4 @@
-# Recipe
+# Reseptit
 
 ## Sovelluksen toiminnot
 
