@@ -6,18 +6,30 @@
 </head>
 
 <body>
-<p><a href="/">Etusivulle</a></p>
-<h1>{{user_info.Username}}</h1>
-<h2>Reseptit</h2>
-{% if user_info.RecipeCount == 1 %}
-<p>Käyttäjällä {{user_info.Username}} on yksi resepti</p>
-<p>Käyttäjän saamien arvioiden keskiarvo on {{user_info.AverageRating}}</p>
-{% elif user_info.RecipeCount == 0 %}
-<p>Käyttäjä ei ole lisännyt reseptejä.</p>
-{% else %}
-<p>Käyttäjällä {{user_info.Username}} on {{user_info.RecipeCount}} reseptiä</p>
-{% endif %}
-{% for recipe in recipes %}
-<h3><a href="/recipes/{{recipe.RecipeId}}">{{recipe.RecipeName}}</a></h3>
-{% endfor %}
+  <p><a href="/">Etusivulle</a></p>
+  <h1>{{user_info.Username}}</h1>
+  <h2>Reseptit</h2>
+  {% if user_info.RecipeCount == 1 %}
+  <p>Käyttäjällä {{user_info.Username}} on yksi resepti</p>
+  <p>Käyttäjän saamien arvioiden keskiarvo on {{user_info.AverageRating}}</p>
+  {% elif user_info.RecipeCount == 0 %}
+  <p>Käyttäjä ei ole lisännyt reseptejä.</p>
+  {% else %}
+  <h3>Julkaistuja respetiä: {{user_info.Username}}</h3>
+  {% endif %}
+  {% for recipe in recipes %}
+  <h3><a href="/recipes/{{recipe.RecipeId}}">{{recipe.RecipeName}}</a></h3>
+  {% endfor %}
+  <h2>Arviot</h2>
+  {% if user_info.ReviewCount == 1 %}
+  <p>Käyttäjällä {{user_info.Username}} on yksi resepti</p>
+  <p>Käyttäjän saamien arvioiden keskiarvo on {{user_info.AverageRating}}</p>
+  {% elif user_info.ReviewCount == 0 %}
+  <p>Käyttäjä ei ole lisännyt reseptejä.</p>
+  {% else %}
+  <h3>Annettuja arviota: {{user_info.ReviewCount}}</h3>
+  {% endif %}
+  {% for review in reviews %}
+  <h3><a href="/recipes/{{review.RecipeId}}">{{review.RecipeName}}</a> {% if review.Rating %}Arvio: {{review.Rating}}{% endif %}</h3>
+  {% endfor %}
 </body>

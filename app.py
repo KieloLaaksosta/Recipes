@@ -86,10 +86,10 @@ def show_recipe(recipe_id):
 
 @app.route("/users/<int:user_id>", methods=["GET"])
 def show_user(user_id):
-    user_info, recipes = database.get_user_view(user_id)
+    user_info, recipes, reviews = database.get_user_view(user_id)
     if(len(user_info) < 1):
         return "Käyttäjää ei löytynyt."
-    return render_template("user.html", user_info=user_info[0], recipes=recipes)
+    return render_template("user.html", user_info=user_info[0], recipes=recipes, reviews=reviews)
 
 @app.route("/create_review", methods=["POST"])
 def create_review():

@@ -215,11 +215,12 @@ def get_user_view(user_id : int) -> tuple:
         user_info = query(
             """
             SELECT
-                U.Username AS Username, COUNT(Recipes.Id) AS RecipeCount, AVG(Reviews.Rating) AS AverageRating
+                U.Username AS Username, COUNT(Recipes.Id) AS RecipeCount, COUNT(Recipes.Id) AS RecipeCount, COUNT(SentReviews.Id) AS ReviewCount, AVG(ReciewedReviews.Rating) AS AverageRating
             FROM 
                 Users AS U
                 LEFT JOIN Recipes ON Recipes.CreatorId = U.Id 
-                LEFT JOIN Reviews ON Reviews.RecipeId = Recipes.Id
+                LEFT JOIN Reviews AS ReciewedReviews ON ReciewedReviews.RecipeId = Recipes.Id
+                LEFT JOIN Reviews AS SentReviews ON SentReviews.ReviewerId = U.Id
             WHERE U.Id = ?
             GROUP BY 
                 U.Id;
@@ -240,6 +241,20 @@ def get_user_view(user_id : int) -> tuple:
             [user_id],
             connection
         )
+
+        reviews = query(
+            """
+            SELECT
+                Recipes.Name AS RecipeName, Recipes.Id AS RecipeId, Reviews.Rating AS Rating
+            FROM 
+                Users AS U
+                JOIN Reviews ON Reviews.ReviewerId = U.Id
+                JOIN Recipes ON Recipes.Id = Reviews.RecipeId
+            WHERE U.Id = ?
+            """,
+            [user_id],
+            connection
+        )
     
         for r in recipes:
             print(list(r))
@@ -247,7 +262,7 @@ def get_user_view(user_id : int) -> tuple:
         for r in user_info:
             print(list(r))
 
-        return (user_info, recipes)
+        return (user_info, recipes, reviews)
     finally:
         connection.close()
 
@@ -263,7 +278,7 @@ def add_review(reviewer_id: int, recipe_id: int, rating: int, comment: str):
 
     try:
         execute(
-            "INSERT INTO Reviews (ReviewerId, RecipeId, Rating, Comment) VALUES (?, ?, ?, ?)",
+            "INSERT INTO Reviews (Id, ReviewerId, RecipeId, Rating, Comment) VALUES (NULL, ?, ?, ?, ?)",
             [reviewer_id, recipe_id, rating, comment],
             connection
         )

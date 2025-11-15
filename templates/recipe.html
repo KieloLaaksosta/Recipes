@@ -40,13 +40,13 @@
   {% endif %}
   <h3>Arvostelut</h3>
   {% if reviews %}
-  {% for review in reviews %}
-  <h4><a href="/users/{{review.ReviewerId}}">{{review.ReviewerName}}</a>: {{review.Rating}} / 5</h4>
-  {% if review.Comment %}
-  <p>{{review.Comment}}</p>
-  {% endif %}
-  {% endfor %}
+    {% for review in reviews %}
+      <h4><a href="/users/{{review.ReviewerId}}">{{review.ReviewerName}}</a>: {{review.Rating}} / 5</h4>
+      {% if review.Comment %}
+        <p>{{review.Comment}}</p>
+      {% endif %}
+    {% endfor %}
   {% else %}
-  <p>Ei arvosteluja</p>
+    <p>Ei arvosteluja</p>
   {% endif %}
 </body>
