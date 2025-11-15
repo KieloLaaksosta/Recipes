@@ -9,14 +9,44 @@
   <p><a href="/">Etusivulle</a></p>
   <h1>{{recipe.Name}}</h1>
   <p><a href="/users/{{recipe.CreatorId}}">{{recipe.CreatorName}}</a></p>
-  <h2>Raaka-aineet</h2>
+  <h3>Raaka-aineet</h3>
   <p>{{recipe.Ingredients}}</p>
-  <h2>Ohjeet</h2>
+  <h3>Ohjeet</h3>
   <p>{{recipe.Instructions}}</p>
   <h4>Tunnisteet</h4>
   <p>
+    {% if tag_names %}
     {% for tag_name in tag_names %}
     <li>{{tag_name}}</li>
     {% endfor %}
+    {% else %}
+    Ei tunnisteita
+    {% endif %}
   </p>
+  {% if session.username %}
+  <h2>Arvostele</h2>
+  <form action="/create_review" method="POST">
+    <input type="hidden" name="recipe_id" value="{{recipe_id}}" />
+    <p>
+      Arvio: <br />
+      <input type="range" min="1" max="5" value="1" name="rating">
+    </p>
+    <p>
+      Kommentti: <br />
+      <input type="text" name="comment" />
+    </p>
+    <input type="submit" value="Lähetä arostelu" />
+  </form>
+  {% endif %}
+  <h3>Arvostelut</h3>
+  {% if reviews %}
+  {% for review in reviews %}
+  <h4><a href="/users/{{review.ReviewerId}}">{{review.ReviewerName}}</a>: {{review.Rating}} / 5</h4>
+  {% if review.Comment %}
+  <p>{{review.Comment}}</p>
+  {% endif %}
+  {% endfor %}
+  {% else %}
+  <p>Ei arvosteluja</p>
+  {% endif %}
 </body>

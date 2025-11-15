@@ -11,6 +11,7 @@
 <h2>Reseptit</h2>
 {% if user_info.RecipeCount == 1 %}
 <p>Käyttäjällä {{user_info.Username}} on yksi resepti</p>
+<p>Käyttäjän saamien arvioiden keskiarvo on {{user_info.AverageRating}}</p>
 {% elif user_info.RecipeCount == 0 %}
 <p>Käyttäjä ei ole lisännyt reseptejä.</p>
 {% else %}

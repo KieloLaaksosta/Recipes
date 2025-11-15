@@ -79,10 +79,10 @@ def query_recipes():
 
 @app.route("/recipes/<int:recipe_id>", methods=["GET"])
 def show_recipe(recipe_id):
-    recipes, tag_names = database.get_recipe(recipe_id)
+    recipes, tag_names, reviews = database.get_recipe(recipe_id)
     if(len(recipes) < 1):
         return "Reseptiä ei löytynyt."
-    return render_template("recipe.html", recipe=recipes[0], tag_names=tag_names)
+    return render_template("recipe.html", recipe=recipes[0], tag_names=tag_names, recipe_id=recipe_id, reviews=reviews)
 
 @app.route("/users/<int:user_id>", methods=["GET"])
 def show_user(user_id):
@@ -90,3 +90,12 @@ def show_user(user_id):
     if(len(user_info) < 1):
         return "Käyttäjää ei löytynyt."
     return render_template("user.html", user_info=user_info[0], recipes=recipes)
+
+@app.route("/create_review", methods=["POST"])
+def create_review():
+    rating = int(request.form["rating"])
+    comment = request.form["comment"]
+    recipe_id = request.form["recipe_id"]
+
+    database.add_review(session["user_id"], recipe_id, rating, comment)
+    return redirect(f"/recipes/{recipe_id}")

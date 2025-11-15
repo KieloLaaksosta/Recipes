@@ -113,12 +113,17 @@ def query_recipes(search: str, tag_ids: list):
             return query(
                 """
                 SELECT
-                    R.Id, R.Name, U.Username As CreatorName, U.Id As CreatorId
+                    R.Id, R.Name, U.Username AS CreatorName, U.Id AS CreatorId, AVG(Reviews.Rating) AS AverageRating
                 FROM 
                     Recipes AS R
                     JOIN Users AS U ON U.Id = R.CreatorId
+                    LEFT JOIN Reviews ON Reviews.RecipeId = R.Id
                 WHERE 
                     (R.Name LIKE ? OR R.Instructions LIKE ? OR R.Ingredients LIKE ?)
+                GROUP BY
+                    R.Id
+                ORDER BY
+                    AverageRating
                 """,
                 [
                     search,
@@ -130,7 +135,7 @@ def query_recipes(search: str, tag_ids: list):
         return query(
             f"""
             SELECT
-                R.Id, R.Name, U.Username As CreatorName, U.Id As CreatorId
+                R.Id, R.Name, U.Username AS CreatorName, U.Id AS CreatorId
             FROM 
                 Recipes AS R
                 JOIN Users AS U ON U.Id = R.CreatorId
@@ -156,7 +161,7 @@ def get_recipe(recipe_id : int):
         recipe = query(
             """
             SELECT
-                R.Id, R.Name, R.Ingredients, R.Instructions, U.Username As CreatorName, U.Id As CreatorId
+                R.Id, R.Name, R.Ingredients, R.Instructions, U.Username AS CreatorName, U.Id AS CreatorId
             FROM 
                 Recipes AS R
                 JOIN Users AS U ON U.Id = R.CreatorId
@@ -170,7 +175,7 @@ def get_recipe(recipe_id : int):
         tags = query(
             """
             SELECT 
-                T.Name As TagName
+                T.Name AS TagName
             FROM  
                 Tags AS T
                 JOIN TagJoin AS TJ ON T.Id = TJ.TagId
@@ -180,12 +185,26 @@ def get_recipe(recipe_id : int):
             [recipe_id],
             connection
         )
+
+        reviews = query(
+            """
+            SELECT
+                U.Id AS ReviewerId, U.Username AS ReviewerName, R.rating, R.comment
+            FROM
+                Reviews AS R
+                JOIN Users AS U ON R.ReviewerId == U.id
+            WHERE
+                R.RecipeId = ?
+            """,
+            [recipe_id],
+            connection
+        )
         
         tag_names = []
         for row in tags:
             tag_names.append(row["TagName"])
         
-        return (recipe, tag_names)
+        return (recipe, tag_names, reviews)
     finally:
         connection.close()
 
@@ -196,11 +215,11 @@ def get_user_view(user_id : int) -> tuple:
         user_info = query(
             """
             SELECT
-                U.Username AS Username, 
-                COUNT(R.Id) AS RecipeCount
+                U.Username AS Username, COUNT(Recipes.Id) AS RecipeCount, AVG(Reviews.Rating) AS AverageRating
             FROM 
                 Users AS U
-                LEFT JOIN Recipes AS R ON R.CreatorId = U.Id 
+                LEFT JOIN Recipes ON Recipes.CreatorId = U.Id 
+                LEFT JOIN Reviews ON Reviews.RecipeId = Recipes.Id
             WHERE U.Id = ?
             GROUP BY 
                 U.Id;
@@ -212,7 +231,7 @@ def get_user_view(user_id : int) -> tuple:
         recipes = query(
             """
             SELECT
-                R.Name as RecipeName, R.Id AS RecipeId
+                R.Name AS RecipeName, R.Id AS RecipeId
             FROM 
                 Users AS U
                 JOIN Recipes AS R ON R.CreatorId = U.Id
@@ -221,7 +240,7 @@ def get_user_view(user_id : int) -> tuple:
             [user_id],
             connection
         )
-
+    
         for r in recipes:
             print(list(r))
 
@@ -229,5 +248,24 @@ def get_user_view(user_id : int) -> tuple:
             print(list(r))
 
         return (user_info, recipes)
+    finally:
+        connection.close()
+
+def add_review(reviewer_id: int, recipe_id: int, rating: int, comment: str):
+    if comment != None:
+        comment = comment.strip()
+        if len(comment) == 0:
+            comment = None
+
+    rating = min(max(rating, 1), 5)
+
+    connection = get_connection()
+
+    try:
+        execute(
+            "INSERT INTO Reviews (ReviewerId, RecipeId, Rating, Comment) VALUES (?, ?, ?, ?)",
+            [reviewer_id, recipe_id, rating, comment],
+            connection
+        )
     finally:
         connection.close()
