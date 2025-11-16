@@ -255,12 +255,6 @@ def get_user_view(user_id : int) -> tuple:
             [user_id],
             connection
         )
-    
-        for r in recipes:
-            print(list(r))
-
-        for r in user_info:
-            print(list(r))
 
         return (user_info, recipes, reviews)
     finally:
