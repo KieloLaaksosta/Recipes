@@ -50,7 +50,7 @@ def create_account(username: str, password: str, password_again: str):
         if error_code == validation.INVALID_TYPE:
             error_msg = "Salasana tulee antaa."
         if error_code == validation.TOO_SHORT:
-            error_msg = f"Salasanan tulee olla vähintään {validation.MIN_RECIPE_NAME_LENGHT} merkkiä pitkä."
+            error_msg = f"Salasanan tulee olla vähintään {validation.MIN_PASSWORD_LENGHT} merkkiä pitkä."
         if error_code == validation.TOO_LONG:
             error_msg = f"Salasanan tulee olla enintään {validation.MAX_PASSWORD_LENGHT} merkkiä pitkä."
         return render_template("error_pages/create_account.html", error_msg=error_msg)
