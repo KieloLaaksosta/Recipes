@@ -55,7 +55,7 @@ def create_account(username: str, password: str, password_again: str):
             error_msg = f"Salasanan tulee olla enintään {validation.MAX_PASSWORD_LENGHT} merkkiä pitkä."
         return render_template("error_pages/create_account.html", error_msg=error_msg)
 
-    password_again = validation.limit_lenght(password_again, max=validation.MAX_PASSWORD_LENGHT)
+    _, password_again = validation.limit_lenght(password_again, max=validation.MAX_PASSWORD_LENGHT)
 
     success_full, error_msg = try_create_account(username, password, password_again)
     if not success_full:
