@@ -215,15 +215,43 @@ def get_user_view(user_id : int) -> tuple:
         user_info = query(
             """
             SELECT
-                U.Username AS Username, COUNT(Recipes.Id) AS RecipeCount, COUNT(Recipes.Id) AS RecipeCount, COUNT(SentReviews.Id) AS ReviewCount, AVG(ReciewedReviews.Rating) AS AverageRating
-            FROM 
+                U.Username AS Username,
+                R.RecipeCount AS RecipeCount,
+                SR.ReviewCount AS ReviewCount,
+                RR.AverageRating
+            FROM
                 Users AS U
-                LEFT JOIN Recipes ON Recipes.CreatorId = U.Id 
-                LEFT JOIN Reviews AS ReciewedReviews ON ReciewedReviews.RecipeId = Recipes.Id
-                LEFT JOIN Reviews AS SentReviews ON SentReviews.ReviewerId = U.Id
-            WHERE U.Id = ?
-            GROUP BY 
-                U.Id;
+            LEFT JOIN (
+                SELECT
+                    CreatorId,
+                    COUNT(Id) AS RecipeCount
+                FROM
+                    Recipes
+                GROUP BY
+                    CreatorId
+            ) AS R ON R.CreatorId = U.Id
+
+            LEFT JOIN (
+                SELECT
+                    ReviewerId,
+                    COUNT(Id) AS ReviewCount
+                FROM
+                    Reviews
+                GROUP BY
+                    ReviewerId
+            ) AS SR ON SR.ReviewerId = U.Id
+
+            LEFT JOIN (
+                SELECT
+                    Recipes.CreatorId,
+                    AVG(Reviews.Rating) AS AverageRating
+                FROM
+                    Recipes
+                    JOIN Reviews ON Reviews.RecipeId = Recipes.Id
+                GROUP BY
+                    Recipes.CreatorId
+            ) AS RR ON RR.CreatorId = U.Id
+            WHERE U.Id = ?;
             """,
             [user_id],
             connection
