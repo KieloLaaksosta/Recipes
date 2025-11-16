@@ -31,7 +31,7 @@ def limit_lenght(string: str, min: int = 0, max: int = 65536) -> tuple:
     return (VALID, string)
 
 def contains_whitespace(string: str) -> bool:
-    return False
+    return any(char.isspace() for char in string)
 
 def clamp_rating(rating: int):
     return min(max(rating, 1), 5)
