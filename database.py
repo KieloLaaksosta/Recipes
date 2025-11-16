@@ -267,13 +267,6 @@ def get_user_view(user_id : int) -> tuple:
         connection.close()
 
 def add_review(reviewer_id: int, recipe_id: int, rating: int, comment: str):
-    if comment != None:
-        comment = comment.strip()
-        if len(comment) == 0:
-            comment = None
-
-    rating = min(max(rating, 1), 5)
-
     connection = get_connection()
 
     try:

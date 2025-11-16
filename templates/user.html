@@ -22,10 +22,9 @@
   {% endfor %}
   <h2>Arviot</h2>
   {% if user_info.ReviewCount == 1 %}
-  <p>Käyttäjällä {{user_info.Username}} on yksi resepti</p>
-  <p>Käyttäjän saamien arvioiden keskiarvo on {{user_info.AverageRating}}</p>
+  <p>Käyttäjä {{user_info.Username}} on antanut yhden arvion.</p>
   {% elif user_info.ReviewCount == 0 %}
-  <p>Käyttäjä ei ole lisännyt reseptejä.</p>
+  <p>Käyttäjä ei ole lisännyt arvioita.</p>
   {% else %}
   <h3>Annettuja arviota: {{user_info.ReviewCount}}</h3>
   {% endif %}
