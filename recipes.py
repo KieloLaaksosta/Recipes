@@ -33,5 +33,7 @@ def query_recipes_post(search: str, tag_ids: list):
     _, search = validation.limit_lenght(search, max=validation.MAX_SEARCH_LENGHT)
     tag_ids = validation.truncate_list(tag_ids)
 
+    search = '%'+'%'.join(search.split(' '))+'%'
+
     results = database.query_recipes(search, tag_ids)
     return render_template("search_recipe.html", found_recipes=len(results), recipes=results, available_tags=tags, did_search=True)
