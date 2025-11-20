@@ -28,12 +28,12 @@ def search_recipe_get():
     tags = database.get_available_tags()
     return render_template("search_recipe.html", available_tags=tags, did_search=False)
 
-def query_recipes_post(search: str, tag_ids: list):
+def query_recipes_post(orginal_search: str, filter_tag_ids: list):
     tags = database.get_available_tags()
-    _, search = validation.limit_lenght(search, max=validation.MAX_SEARCH_LENGHT)
-    tag_ids = validation.truncate_list(tag_ids)
+    _, orginal_search = validation.limit_lenght(orginal_search, max=validation.MAX_SEARCH_LENGHT)
+    filter_tag_ids = validation.truncate_list(filter_tag_ids)
 
-    search = '%'+'%'.join(search.split(' '))+'%'
+    search = '%'+'%'.join(orginal_search.split(' '))+'%'
 
-    results = database.query_recipes(search, tag_ids)
-    return render_template("search_recipe.html", found_recipes=len(results), recipes=results, available_tags=tags, did_search=True)
+    results = database.query_recipes(search, filter_tag_ids)
+    return render_template("search_recipe.html", found_recipes=len(results), recipes=results, available_tags=tags, did_search=True, search=orginal_search, filter_tag_ids=filter_tag_ids)

@@ -11,12 +11,16 @@
     <p>
       Hakusana (alaviiva [_] hakee mitä tahansa merkkiä ja prosentti merkki [%] miten tahansa monta mitä tahansa
       merkkiä): <br />
-      <input type="text" name="search" />
+      <input type="text" name="search" value="{{ search }}" />
     </p>
     <h4>Näytä vain respetit joilla on tunnisteet:</h4>
     <p>
       {% for tag in available_tags %}
-      <input type="checkbox" name="tags" value="{{ tag.id }}" />{{ tag.name }}
+      {% if tag.id in filter_tag_ids %}
+      <input type="checkbox" name="tags" value="{{ tag.id }}" checked="checked"/>{{ tag.name }}
+      {% else %}
+      <input type="checkbox" name="tags" value="{{ tag.id }}"/>{{ tag.name }}
+      {% endif %}
       {% endfor %}
     </p>
     <p>
