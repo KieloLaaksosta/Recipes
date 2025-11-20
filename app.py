@@ -37,13 +37,12 @@ def create_recipe():
 def add_recipe():
     return recipes.add_recipe(request.form["recipe_name"], request.form["ingredients"], request.form["instructions"], request.form.getlist("tags"))
 
-@app.route("/search_recipe")
+@app.route("/search_recipe", methods=["GET", "POST"])
 def search_recipe():
-    return recipes.search_recipe()
-
-@app.route("/query_recipes", methods=["POST"])
-def query_recipes():
-    return recipes.query_recipes(request.form["search"], request.form.getlist("tags"))
+    if request.method == "POST":
+        return recipes.query_recipes_post(request.form["search"], request.form.getlist("tags"))
+    else:
+        return recipes.search_recipe_get()
 
 @app.route("/recipes/<int:recipe_id>", methods=["GET"])
 def show_recipe(recipe_id):

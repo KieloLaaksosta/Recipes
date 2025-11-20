@@ -7,9 +7,10 @@
 
 <body>
   <p><a href="/">Etusivulle</a></p>
-  <form action="/query_recipes" method="post">
+  <form action="/search_recipe" method="post">
     <p>
-      Hakusana (alaviiva [_] hakee mitä tahansa merkkiä ja prosentti merkki [%] miten tahansa monta mitä tahansa merkkiä): <br />
+      Hakusana (alaviiva [_] hakee mitä tahansa merkkiä ja prosentti merkki [%] miten tahansa monta mitä tahansa
+      merkkiä): <br />
       <input type="text" name="search" />
     </p>
     <h4>Näytä vain respetit joilla on tunnisteet:</h4>
@@ -22,6 +23,17 @@
       <input type="submit" value="Hae" />
     </p>
   </form>
+  {% if recipes %}
+  {% for recipe in recipes %}
+  <h1><a href="/recipes/{{recipe.Id}}">{{recipe.Name}}</a> by <a
+      href="/users/{{recipe.CreatorId}}">{{recipe.CreatorName}}</a> {% if recipe.AverageRating %}Arvio:
+    {{recipe.AverageRating}}{% endif %}</h1>
+  {% endfor %}
+  {% else %}
+  {% if did_search %}
+  <h1>Reseptejä ei löytynt. Kokeile toista hakua. </h1>
+  {% endif %}
+  {% endif %}
 </body>
 
 </html>

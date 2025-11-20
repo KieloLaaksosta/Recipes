@@ -24,13 +24,14 @@ def add_recipe(recipe_name, ingredients, instructions, tag_names):
     database.add_recipe(session["user_id"], recipe_name, ingredients, instructions, tag_names)
     return redirect("/")
 
-def search_recipe():
+def search_recipe_get():
     tags = database.get_available_tags()
-    return render_template("search_recipe.html", available_tags=tags)
+    return render_template("search_recipe.html", available_tags=tags, did_search=False)
 
-def query_recipes(search: str, tag_ids: list):
-    _, search = validation.limit_lenght(search, validation.MAX_SEARCH_LENGHT)
+def query_recipes_post(search: str, tag_ids: list):
+    tags = database.get_available_tags()
+    _, search = validation.limit_lenght(search, max=validation.MAX_SEARCH_LENGHT)
     tag_ids = validation.truncate_list(tag_ids)
 
     results = database.query_recipes(search, tag_ids)
-    return render_template("search_results.html", found_recipes = len(results), recipes=results)
+    return render_template("search_recipe.html", found_recipes=len(results), recipes=results, available_tags=tags, did_search=True)
