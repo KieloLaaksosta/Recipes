@@ -7,7 +7,7 @@ def create_recipe():
 
 def add_recipe(recipe_name, ingredients, instructions, tag_names):
     error_code, recipe_name = validation.limit_lenght(recipe_name, validation.MIN_RECIPE_NAME_LENGHT, validation.MAX_RECIPE_NAME_LENGHT)
-    if error_code == validation.VALID or error_code == validation.TOO_SHORT: 
+    if error_code == validation.INVALID_TYPE or error_code == validation.TOO_SHORT: 
         if error_code == validation.INVALID_TYPE:
             error_msg = "Reseptille tulee antaa nimi."
         if error_code == validation.TOO_SHORT:
