@@ -1,6 +1,6 @@
 from flask import Flask
 from flask import render_template, request
-import config, database, account, recipes, reviews, views
+import config, account, recipes, reviews, views
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -31,7 +31,7 @@ def logout():
 
 @app.route("/create_recipe")
 def create_recipe():
-    recipes.create_recipe()
+    return recipes.create_recipe()
 
 @app.route("/add_recipe", methods=["POST"])
 def add_recipe():

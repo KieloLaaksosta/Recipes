@@ -10,7 +10,6 @@ def add_recipe(recipe_name, ingredients, instructions, tag_names):
     if error_code == validation.VALID or error_code == validation.TOO_SHORT: 
         if error_code == validation.INVALID_TYPE:
             error_msg = "Reseptille tulee antaa nimi."
-        
         if error_code == validation.TOO_SHORT:
             error_msg = f"Reseptin nimen tulee olla vähintään {validation.MIN_RECIPE_NAME_LENGHT} merkkiä pitkä."
         return render_template("error_pages/add_recipe.html", error_msg=error_msg)
