@@ -15,7 +15,7 @@
   {% elif user_info.RecipeCount == 0 %}
   <p>Käyttäjä ei ole lisännyt reseptejä.</p>
   {% else %}
-  <h3>Julkaistuja respetiä: {{user_info.Username}}</h3>
+  <h3>Julkaistuja reseptejä: {{user_info.RecipeCount}}</h3>
   {% endif %}
   {% for recipe in recipes %}
   <h3><a href="/recipes/{{recipe.RecipeId}}">{{recipe.RecipeName}}</a></h3>

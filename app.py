@@ -9,33 +9,30 @@ app.secret_key = config.secret_key
 def index():
     return render_template("index.html")
 
-@app.route("/register")
+@app.route("/register", methods=["GET", "POST"])
 def register():
-    return render_template("register.html")
+    if request.method == "POST":
+        return account.register_post(request.form["username"], request.form["password"], request.form["password_again"])
+    else:
+        return account.register_get()
 
-@app.route("/create_account", methods=["POST"])
-def create_account():
-    return account.create_account(request.form["username"], request.form["password"], request.form["password_again"])
-
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    return render_template("login.html")
-
-@app.route("/login_account", methods=["POST"])
-def login_account():
-    return account.login_account(request.form["username"], request.form["password"])
+    if request.method == "POST":
+        return account.login_post(request.form["username"], request.form["password"])
+    else:
+        return account.login_get()
     
 @app.route("/logout")
 def logout():
     return account.log_out()
 
-@app.route("/create_recipe")
+@app.route("/create_recipe", methods=["GET", "POST"])
 def create_recipe():
-    return recipes.create_recipe()
-
-@app.route("/add_recipe", methods=["POST"])
-def add_recipe():
-    return recipes.add_recipe(request.form["recipe_name"], request.form["ingredients"], request.form["instructions"], request.form.getlist("tags"))
+    if request.method == "POST":
+        return recipes.create_recipe_post(request.form["recipe_name"], request.form["ingredients"], request.form["instructions"], request.form.getlist("tags"))
+    else:
+        return recipes.create_recipe_get()
 
 @app.route("/search_recipe", methods=["GET", "POST"])
 def search_recipe():

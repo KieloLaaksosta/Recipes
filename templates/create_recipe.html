@@ -7,22 +7,30 @@
 
 <body>
   <p><a href="/">Etusivulle</a></p>
-  <form action="/add_recipe" method="post">
+  {% if error_msg %}
+  <h1>VIRHE RESEPTIN LISÄÄMISESSÄ</h1>
+  <h2>{{error_msg}}</h2>
+  {% endif %}
+  <form action="/create_recipe" method="post">
     <p>
       Reseptin nimi: <br />
-      <input type="text" name="recipe_name" />
+      <input type="text" name="recipe_name" maxlength="{{ max_name_len }}" value="{{ name }}"/>
     </p>
     <p>
       Raaka-aineet (esim. 1dl maitoa, 8dl jauhoja): <br />
-      <textarea rows="10" cols="80" name="ingredients"></textarea>
+      <textarea rows="10" cols="80" name="ingredients" maxlength="{{ max_ingredients_len }}" value="{{ ingredients }}"></textarea>
     </p>
     <p>
       Ohjeet (esim. aseta uuni 200 lämpöön, sekoita kuiva-aineet): <br />
-      <textarea rows="10" cols="80" name="instructions"></textarea>
+      <textarea rows="10" cols="80" name="instructions" maxlength="{{ max_instructions_len }}" value="{{ instructions }}"></textarea>
     </p>
     <p>
       {% for tag in available_tags %}
-      <input type="checkbox" name="tags" value="{{ tag[0] }}" />{{ tag[1] }}
+      {% if tag.id in added_tags %}
+      <input type="checkbox" name="tags" value="{{ tag.id }}" checked="checked"/>{{ tag.name }}
+      {% else %}
+      <input type="checkbox" name="tags" value="{{ tag.id }}"/>{{ tag.name }}
+      {% endif %}
       {% endfor %}
     </p>
     <p>

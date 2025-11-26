@@ -216,8 +216,8 @@ def get_user_view(user_id : int) -> tuple:
             """
             SELECT
                 U.Username AS Username,
-                R.RecipeCount AS RecipeCount,
-                SR.ReviewCount AS ReviewCount,
+                COALESCE(R.RecipeCount, 0) AS RecipeCount,
+                COALESCE(SR.ReviewCount, 0) AS ReviewCount,
                 RR.AverageRating
             FROM
                 Users AS U

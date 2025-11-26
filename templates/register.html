@@ -7,7 +7,11 @@
 
 <body>
   <p><a href="/">Etusivulle</a></p>
-  <form action="/create_account" method="post">
+  {% if error_msg %}
+  <h1>VIRHE REKISTERÖITYMISESSÄ</h1>
+  <h2>{{error_msg}}</h2>
+  {% endif %}
+  <form action="/register" method="post">
     <p>
       Tunnus: <br />
       <input type="text" name="username" />
