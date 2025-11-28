@@ -47,17 +47,20 @@ def search_recipe_get():
         "search_recipe.html", 
         available_tags=tags, 
         did_search=False,
-        max_search_len=validation.MAX_SEARCH_LENGTH
+        max_search_len=validation.MAX_SEARCH_LENGTH,
+        page=0
     )
 
-def query_recipes_post(orginal_search: str, filter_tag_ids: list):
+def query_recipes_post(orginal_search: str, filter_tag_ids: list, page: int):
+    RECIPES_PER_PAGE = 30
+
     tags = database.get_available_tags()
     _, orginal_search = validation.limit_lenght(orginal_search, max=validation.MAX_SEARCH_LENGTH)
     filter_tag_ids = validation.truncate_list(filter_tag_ids)
 
     search = '%'+'%'.join(orginal_search.split(' '))+'%'
 
-    results = database.query_recipes(search, filter_tag_ids)
+    results = database.query_recipes(search, filter_tag_ids, page * RECIPES_PER_PAGE, RECIPES_PER_PAGE)
     return render_template(
         "search_recipe.html", 
         found_recipes=len(results), 
@@ -65,7 +68,8 @@ def query_recipes_post(orginal_search: str, filter_tag_ids: list):
         did_search=True, 
         search=orginal_search, 
         filter_tag_ids=filter_tag_ids,
-        max_search_len=validation.MAX_SEARCH_LENGTH
+        max_search_len=validation.MAX_SEARCH_LENGTH,
+        page=page
     )
 
 def edit_recipe_get(recipe_id: int):

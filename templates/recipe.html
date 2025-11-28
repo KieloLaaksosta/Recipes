@@ -50,6 +50,9 @@
       <a href="/login">Kirjaudu sisään lisätäksesi arvostelu</a>
     </p>
     {% endif %}
+    {% if page %}
+      <p><a href="/recipes/{{ recipe_id }}/{{ page - 1 }}">Edellinen sivu</a></p>
+    {% endif %}
     {% if reviews %}
       {% for review in reviews %}
         <h4><a href="/users/{{review.ReviewerId}}">{{ review.ReviewerName }}</a>: {{ review.Rating }} / 5</h4>
@@ -57,6 +60,7 @@
           <p>{{review.Comment}}</p>
         {% endif %}
       {% endfor %}
+      <p><a href="/recipes/{{ recipe_id }}/{{ page + 1 }}">Seuraava sivu</a></p>
     {% else %}
       <p>Ei arvosteluja</p>
     {% endif %}

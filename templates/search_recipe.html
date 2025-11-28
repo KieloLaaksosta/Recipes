@@ -17,16 +17,26 @@
     <p>
       {% for tag in available_tags %}
       {% if tag.id in filter_tag_ids %}
-      <input type="checkbox" name="tags" value="{{ tag.id }}" checked="checked"/>{{ tag.name }}
+      <input type="checkbox" name="tags" value="{{ tag.id }}" checked="checked"/>
       {% else %}
-      <input type="checkbox" name="tags" value="{{ tag.id }}"/>{{ tag.name }}
+      <input type="checkbox" name="tags" value="{{ tag.id }}"/>
       {% endif %}
+      {{ tag.name }}
       {% endfor %}
     </p>
     <p>
       <input type="submit" value="Hae" />
     </p>
   </form>
+  {% if page %}
+  <form action="/search_recipe/{{ page - 1}}" method="post">
+    <input type="hidden" name="search" value="{{ search }}" maxlength="{{ max_search_len }}" />
+    {% for tag_id in filter_tag_ids %}
+      <input type="hidden" name="tags" value="{{ tag_id }}"/>
+    {% endfor %}
+    <p><input type="submit" value="Edellinen sivu" /></p>
+  </form>
+  {% endif %}
   {% if recipes %}
   {% for recipe in recipes %}
   <h1>
@@ -35,6 +45,13 @@
     {% if recipe.AverageRating %}Arvio: {{ recipe.AverageRating | round(2) }} {% endif %}
   </h1>
   {% endfor %}
+  <form action="/search_recipe/{{ page + 1}}" method="post">
+    <input type="hidden" name="search" value="{{ search }}" maxlength="{{ max_search_len }}" />
+    {% for tag_id in filter_tag_ids %}
+      <input type="hidden" name="tags" value="{{ tag_id }}"/>
+    {% endfor %}
+    <p><input type="submit" value="Seuraava sivu" /></p>
+  </form>
   {% else %}
   {% if did_search %}
   <h1>Reseptejä ei löytynt. Kokeile toista hakua. </h1>

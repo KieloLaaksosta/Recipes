@@ -105,11 +105,13 @@ def get_available_tags():
     finally:
         connection.close()
 
-def query_recipes(search: str, tag_ids: list):
+def query_recipes(search: str, tag_ids: list, offset: int, limit: int):
     connection = get_connection()
 
     try:
         if len(tag_ids) == 0:
+            print(offset)
+            print(limit)
             return query(
                 """
                 SELECT
@@ -124,11 +126,17 @@ def query_recipes(search: str, tag_ids: list):
                     R.Id
                 ORDER BY
                     AverageRating
+                LIMIT
+                    ?
+                OFFSET
+                    ?
                 """,
                 [
                     search,
                     search,
-                    search
+                    search,
+                    limit,
+                    offset
                 ],
                 connection
             )
@@ -189,7 +197,7 @@ def get_recipe(recipe_id: int):
     finally:
         connection.close()
 
-def get_recipe_and_reviews(recipe_id: int):
+def get_recipe_and_reviews(recipe_id: int, offset: int, limit: int):
     connection = get_connection()
 
     try:
@@ -230,8 +238,12 @@ def get_recipe_and_reviews(recipe_id: int):
                 JOIN Users AS U ON R.ReviewerId == U.id
             WHERE
                 R.RecipeId = ?
+            LIMIT
+                ?
+            OFFSET
+                ?
             """,
-            [recipe_id],
+            [recipe_id, limit, offset],
             connection
         )
         
@@ -239,7 +251,7 @@ def get_recipe_and_reviews(recipe_id: int):
     finally:
         connection.close()
 
-def get_user_view(user_id: int) -> tuple:
+def get_user_view(user_id: int, recipeOffset: int, recipeLimit: int, reviewOffset: int, reviewLimit: int) -> tuple:
     connection = get_connection()
 
     try:
@@ -296,8 +308,12 @@ def get_user_view(user_id: int) -> tuple:
                 Users AS U
                 JOIN Recipes AS R ON R.CreatorId = U.Id
             WHERE U.Id = ?
+            LIMIT
+                ?
+            OFFSET
+                ?
             """,
-            [user_id],
+            [user_id, recipeLimit, recipeOffset],
             connection
         )
 
@@ -310,8 +326,12 @@ def get_user_view(user_id: int) -> tuple:
                 JOIN Reviews ON Reviews.ReviewerId = U.Id
                 JOIN Recipes ON Recipes.Id = Reviews.RecipeId
             WHERE U.Id = ?
+            LIMIT
+                ?
+            OFFSET
+                ?
             """,
-            [user_id],
+            [user_id, reviewLimit, reviewOffset],
             connection
         )
 

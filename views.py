@@ -1,28 +1,54 @@
 from flask import render_template
 import database
 
-def show_user(user_id: int):
-    user_info, recipes, reviews = database.get_user_view(user_id)
+def show_user(user_id: int, recipe_page: int, review_page: int):
+    RECIPES_PER_PAGE = 15
+    REVIEWS_PER_PAGE = 15
+
+    user_info, recipes, reviews = database.get_user_view(
+        user_id,
+        RECIPES_PER_PAGE * recipe_page,
+        RECIPES_PER_PAGE, 
+        REVIEWS_PER_PAGE * review_page,
+        REVIEWS_PER_PAGE
+    )
     if len(user_info) < 1:
         return render_template(
             "user.html", 
-            found=False
+            found=False,
+            user_info=None, 
+            recipes=None, 
+            reviews=None,
+            recipe_page=None,
+            review_page=None,
+            user_id=user_id
         )
     return render_template(
         "user.html", 
         found=True, 
         user_info=user_info[0], 
         recipes=recipes, 
-        reviews=reviews
+        reviews=reviews,
+        recipe_page=recipe_page,
+        review_page=review_page,
+        user_id=user_id
     )
 
-def show_recipe(recipe_id: int):
-    recipes, tag_names, reviews = database.get_recipe_and_reviews(recipe_id)
+def show_recipe(recipe_id: int, page: int):
+    REVIEWS_PER_PAGE = 15
+
+    recipes, tag_names, reviews = database.get_recipe_and_reviews(recipe_id, REVIEWS_PER_PAGE * page, REVIEWS_PER_PAGE)
     print(len(recipes) < 1)
     if len(recipes) < 1:
         return render_template(
             "recipe.html",
-            found=False
+            found=False,
+            RecipeId=None,
+            recipe=None, 
+            tag_names=None, 
+            recipe_id=None, 
+            reviews=None,
+            page=None
         )
     return render_template(
         "recipe.html", 
@@ -31,5 +57,6 @@ def show_recipe(recipe_id: int):
         recipe=recipes[0], 
         tag_names=tag_names, 
         recipe_id=recipe_id, 
-        reviews=reviews
+        reviews=reviews,
+        page=page
     )

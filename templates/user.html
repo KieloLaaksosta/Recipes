@@ -20,6 +20,12 @@
     {% else %}
       <h3>Julkaistuja reseptejä: {{user_info.RecipeCount}}</h3>
     {% endif %}
+    {% if recipe_page %}
+      <p><a href="/users/{{ user_id }}/{{ recipe_page - 1 }}/{{ review_page }}">Edellinen sivu</a></p>
+    {% endif %}
+    {% if recipes %}
+      <p><a href="/users/{{ user_id }}/{{ recipe_page + 1 }}/{{ review_page }}">Seuraava sivu</a></p>
+    {% endif %}
     {% for recipe in recipes %}
       <h3>
         <a href="/recipes/{{ recipe.RecipeId }}">{{recipe.RecipeName}}</a>
@@ -35,6 +41,12 @@
       <p>Käyttäjä ei ole lisännyt arvioita.</p>
     {% else %}
       <h3>Annettuja arviota: {{user_info.ReviewCount}}</h3>
+    {% endif %}
+    {% if review_page %}
+      <p><a href="/users/{{ user_id }}/{{ recipe_page }}/{{ review_page - 1 }}">Edellinen sivu</a></p>
+    {% endif %}
+    {% if reviews %}
+      <p><a href="/users/{{ user_id }}/{{ recipe_page }}/{{ review_page + 1 }}">Seuraava sivu</a></p>
     {% endif %}
     {% for review in reviews %}
       <h3><a href="/recipes/{{ review.RecipeId }}">{{review.RecipeName}}</a> {% if review.Rating %}Arvio: {{review.Rating}}{% endif %}</h3>
