@@ -14,9 +14,9 @@
     <h3><a href="/recipes/{{ RecipeId }}/edit">Muokkaa</a></h3>
     {% endif %}
     <h3>Raaka-aineet</h3>
-    <p>{{recipe.Ingredients}}</p>
+    <p>{{ recipe.Ingredients | show_lines }}</p>
     <h3>Ohjeet</h3>
-    <p>{{recipe.Instructions}}</p>
+    <p>{{ recipe.Instructions | show_lines }}</p>
     <h4>Tunnisteet</h4>
     <p>
       {% if tag_names %}
@@ -57,7 +57,7 @@
       {% for review in reviews %}
         <h4><a href="/users/{{review.ReviewerId}}">{{ review.ReviewerName }}</a>: {{ review.Rating }} / 5</h4>
         {% if review.Comment %}
-          <p>{{review.Comment}}</p>
+          <p>{{ review.Comment | show_lines }}</p>
         {% endif %}
       {% endfor %}
       <p><a href="/recipes/{{ recipe_id }}/{{ page + 1 }}">Seuraava sivu</a></p>

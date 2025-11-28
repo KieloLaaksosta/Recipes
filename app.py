@@ -1,8 +1,15 @@
 from flask import Flask, render_template, abort, session, request
 import config, account, recipes, reviews, views, database
+import markupsafe
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
+
+@app.template_filter()
+def show_lines(content):
+    content = str(markupsafe.escape(content))
+    content = content.replace("\n", "<br />")
+    return markupsafe.Markup(content)
 
 def check_csfr_token(token):
     session_token = session.get("csfr_token")
