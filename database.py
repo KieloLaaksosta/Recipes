@@ -2,7 +2,7 @@ import sqlite3
 from flask import g
 
 def last_insert_id():
-    return g.last_insert_id  
+    return g.last_insert_id
 
 def get_connection():
     connection = sqlite3.connect("database.db")
@@ -11,18 +11,18 @@ def get_connection():
 
     return connection
 
-def execute(query: str, params, connection):
+def execute(sql: str, params, connection):
     try:
-        result = connection.execute(query, params)
+        result = connection.execute(sql, params)
         g.last_insert_id = result.lastrowid
         connection.commit()
     except Exception as e:
         connection.rollback()
         raise e
 
-def query(query: str, params, connection):
+def query(sql: str, params, connection):
     try:
-        result = connection.execute(query, params).fetchall()
+        result = connection.execute(sql, params).fetchall()
         connection.commit()
     except Exception as e:
         connection.rollback()
@@ -52,7 +52,7 @@ def get_password(username: str):
     try:
         return query(
             "SELECT PasswordHash FROM Users WHERE Username = ?",
-            [username], 
+            [username],
             connection
         )
     finally:
@@ -64,7 +64,7 @@ def get_user_id(username: str):
     try:
         return query(
             "SELECT Id FROM Users WHERE Username = ?",
-            [username], 
+            [username],
             connection
         )
     finally:
@@ -84,7 +84,7 @@ def add_recipe(creator, recipe_name: str, ingredients: str, instructions: str, t
         )
 
         recipe_id = last_insert_id()
-        
+
         for tag in tag_ids:
             execute(
                 """
@@ -116,11 +116,11 @@ def query_recipes(search: str, tag_ids: list, offset: int, limit: int):
                 """
                 SELECT
                     R.Id, R.Name, U.Username AS CreatorName, U.Id AS CreatorId, AVG(Reviews.Rating) AS AverageRating
-                FROM 
+                FROM
                     Recipes AS R
                     JOIN Users AS U ON U.Id = R.CreatorId
                     LEFT JOIN Reviews ON Reviews.RecipeId = R.Id
-                WHERE 
+                WHERE
                     (R.Name LIKE ? OR R.Instructions LIKE ? OR R.Ingredients LIKE ?)
                 GROUP BY
                     R.Id
@@ -144,11 +144,11 @@ def query_recipes(search: str, tag_ids: list, offset: int, limit: int):
             f"""
             SELECT
                 R.Id, R.Name, U.Username AS CreatorName, U.Id AS CreatorId
-            FROM 
+            FROM
                 Recipes AS R
                 JOIN Users AS U ON U.Id = R.CreatorId
                 JOIN TagJoin TJ ON TJ.RecipeId = R.Id
-            WHERE 
+            WHERE
                 (R.Name LIKE ? OR R.Instructions LIKE ? OR R.Ingredients LIKE ?)
                 AND TJ.TagId IN ({get_placeholders(len(tag_ids))})
             GROUP BY
@@ -169,10 +169,10 @@ def get_recipe(recipe_id: int):
             """
             SELECT
                 R.Name, R.Ingredients, R.Instructions, U.Username AS CreatorName, U.Id AS CreatorId
-            FROM 
+            FROM
                 Recipes AS R
                 JOIN Users AS U ON U.Id = R.CreatorId
-            WHERE 
+            WHERE
                 R.Id = ?
             """,
             [recipe_id],
@@ -181,9 +181,9 @@ def get_recipe(recipe_id: int):
 
         tags = query(
             """
-            SELECT 
+            SELECT
                 T.Id AS TagId
-            FROM  
+            FROM
                 Tags AS T
                 JOIN TagJoin AS TJ ON T.Id = TJ.TagId
             WHERE
@@ -205,10 +205,10 @@ def get_recipe_and_reviews(recipe_id: int, offset: int, limit: int):
             """
             SELECT
                 R.Name AS Name, R.Ingredients AS Ingredients, R.Instructions AS Instructions, U.Username AS CreatorName, U.Id AS CreatorId
-            FROM 
+            FROM
                 Recipes AS R
                 JOIN Users AS U ON U.Id = R.CreatorId
-            WHERE 
+            WHERE
                 R.Id = ?
             """,
             [recipe_id],
@@ -217,9 +217,9 @@ def get_recipe_and_reviews(recipe_id: int, offset: int, limit: int):
 
         tags = query(
             """
-            SELECT 
+            SELECT
                 T.Name AS TagName
-            FROM  
+            FROM
                 Tags AS T
                 JOIN TagJoin AS TJ ON T.Id = TJ.TagId
             WHERE
@@ -246,12 +246,12 @@ def get_recipe_and_reviews(recipe_id: int, offset: int, limit: int):
             [recipe_id, limit, offset],
             connection
         )
-        
+
         return recipe, (tag["TagName"] for tag in tags), reviews
     finally:
         connection.close()
 
-def get_user_view(user_id: int, recipeOffset: int, recipeLimit: int, reviewOffset: int, reviewLimit: int) -> tuple:
+def get_user_view(user_id: int, recipe_offset: int, recipe_limit: int, review_offset: int, review_limit: int) -> tuple:
     connection = get_connection()
 
     try:
@@ -304,7 +304,7 @@ def get_user_view(user_id: int, recipeOffset: int, recipeLimit: int, reviewOffse
             """
             SELECT
                 R.Name AS RecipeName, R.Id AS RecipeId
-            FROM 
+            FROM
                 Users AS U
                 JOIN Recipes AS R ON R.CreatorId = U.Id
             WHERE U.Id = ?
@@ -313,7 +313,7 @@ def get_user_view(user_id: int, recipeOffset: int, recipeLimit: int, reviewOffse
             OFFSET
                 ?
             """,
-            [user_id, recipeLimit, recipeOffset],
+            [user_id, recipe_limit, recipe_offset],
             connection
         )
 
@@ -321,7 +321,7 @@ def get_user_view(user_id: int, recipeOffset: int, recipeLimit: int, reviewOffse
             """
             SELECT
                 Recipes.Name AS RecipeName, Recipes.Id AS RecipeId, Reviews.Rating AS Rating
-            FROM 
+            FROM
                 Users AS U
                 JOIN Reviews ON Reviews.ReviewerId = U.Id
                 JOIN Recipes ON Recipes.Id = Reviews.RecipeId
@@ -331,7 +331,7 @@ def get_user_view(user_id: int, recipeOffset: int, recipeLimit: int, reviewOffse
             OFFSET
                 ?
             """,
-            [user_id, reviewLimit, reviewOffset],
+            [user_id, review_limit, review_offset],
             connection
         )
 
@@ -368,7 +368,7 @@ def edit_recipe(recipe_id: int, recipe_name: str, instructions: str, ingredients
         for tag_id in tags:
             execute(
                 """
-                INSERT INTO TagJoin (RecipeId, TagId) 
+                INSERT INTO TagJoin (RecipeId, TagId)
                 VALUES (?, ?)
                 """,
                 [recipe_id, tag_id],

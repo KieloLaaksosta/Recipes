@@ -19,14 +19,14 @@ MIN_RECIPE_NAME_LENGTH = 1
 
 
 
-def limit_lenght(string: str, min: int = 0, max: int = 65536) -> tuple:
-    if type(string) is not str or string == None:
+def limit_lenght(string: str, min_len: int = 0, max_len: int = 65536) -> tuple:
+    if isinstance(string, str) or string is None:
         return (-2, "")
-    
-    if len(string) < min:
+
+    if len(string) < min_len:
         return (TOO_SHORT, string)
-    if len(string) > max:
-        return (TOO_LONG, string[:max])
+    if len(string) > max_len:
+        return (TOO_LONG, string[:max_len])
 
     return (VALID, string)
 
@@ -40,11 +40,11 @@ def truncate_list(values: list, n: int = 255) -> list:
     return values[:n]
 
 def trim_limit_lenght(string: str, n: int) -> str:
-    if type(string) is not str or string == None:
+    if isinstance(string, str) is not str or string is None:
         return None
-    
+
     string = string.strip()
-    if(len(string) == 0):
+    if len(string) == 0:
         return None
 
     return string[:min(n, len(string))]
