@@ -110,8 +110,6 @@ def query_recipes(search: str, tag_ids: list, offset: int, limit: int):
 
     try:
         if len(tag_ids) == 0:
-            print(offset)
-            print(limit)
             return query(
                 """
                 SELECT

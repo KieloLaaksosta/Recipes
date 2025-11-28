@@ -111,8 +111,6 @@ def edit_recipe_post(recipe_id: int, recipe_name: str, instructions: str, ingred
 
     recipe = {"Name" : recipe_name, "Instructions": instructions, "Ingredients": ingredients}
 
-    print(recipe)
-
     if not error_msg:
         database.edit_recipe(
             recipe_id,

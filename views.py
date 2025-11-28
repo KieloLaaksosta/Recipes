@@ -38,7 +38,6 @@ def show_recipe(recipe_id: int, page: int):
     reviews_per_page = 15
 
     recipes, tag_names, reviews = database.get_recipe_and_reviews(recipe_id, reviews_per_page * page, reviews_per_page)
-    print(len(recipes) < 1)
     if len(recipes) < 1:
         return render_template(
             "recipe.html",
