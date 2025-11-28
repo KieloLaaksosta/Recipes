@@ -2,32 +2,32 @@
 <html>
 
 <head>
-  <title>Lisää resepti</title>
+  <title>Muokkaa reseptiä</title>
 </head>
 
 <body>
   <p><a href="/">Etusivulle</a></p>
   {% if error_msg %}
-  <h1>VIRHE RESEPTIN LISÄÄMISESSÄ</h1>
+  <h1>VIRHE MUUTOSTEN TALLENTAMISESSA</h1>
   <h2>{{error_msg}}</h2>
   {% endif %}
-  <form action="/create_recipe" method="post">
+  <form action="" method="post">
     <input type="hidden" name="csfr_token" value="{{ session.csfr_token }}" />
     <p>
       Reseptin nimi: <br />
-      <input type="text" name="recipe_name" maxlength="{{ max_name_len }}" value="{{ name }}"/>
+      <input type="text" name="recipe_name" value="{{ recipe.Name }}" maxlength="{{ max_name_len }}"/>
     </p>
     <p>
       Raaka-aineet (esim. 1dl maitoa, 8dl jauhoja): <br />
-      <textarea rows="10" cols="80" name="ingredients" maxlength="{{ max_ingredients_len }}" value="{{ ingredients }}"></textarea>
+      <textarea rows="10" cols="80" name="ingredients" maxlength="{{ max_ingredients_len }}">{{ recipe.Ingredients }}</textarea>
     </p>
     <p>
       Ohjeet (esim. aseta uuni 200 lämpöön, sekoita kuiva-aineet): <br />
-      <textarea rows="10" cols="80" name="instructions" maxlength="{{ max_instructions_len }}" value="{{ instructions }}"></textarea>
+      <textarea rows="10" cols="80" name="instructions" maxlength="{{ max_instructions_len }}">{{ recipe.Instructions }}</textarea>
     </p>
     <p>
       {% for tag in available_tags %}
-      {% if tag.id in added_tags %}
+      {% if tag.id in added_tag_ids %}
       <input type="checkbox" name="tags" value="{{ tag.id }}" checked="checked"/>{{ tag.name }}
       {% else %}
       <input type="checkbox" name="tags" value="{{ tag.id }}"/>{{ tag.name }}
@@ -35,7 +35,7 @@
       {% endfor %}
     </p>
     <p>
-      <input type="submit" value="Lisää resepti" />
+      <input type="submit" value="Tallenna muutokset" />
     </p>
   </form>
 </body>

@@ -15,6 +15,7 @@
         {% endif %}
     </p>
     {% if session.username %}
+    <p><a href="/users/{{ session.user_id }}">Oma käyttäjä / {{ session.username }}</a></p>
     <p><a href="/create_recipe">Lisää resepti</a></p>
     {% endif %}
     <p><a href="/search_recipe">Hae reseptejä</a></p>

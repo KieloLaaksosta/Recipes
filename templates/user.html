@@ -7,28 +7,39 @@
 
 <body>
   <p><a href="/">Etusivulle</a></p>
-  <h1>{{user_info.Username}}</h1>
-  <h2>Reseptit</h2>
-  {% if user_info.RecipeCount == 1 %}
-  <p>Käyttäjällä {{user_info.Username}} on yksi resepti</p>
-  <p>Käyttäjän saamien arvioiden keskiarvo on {{user_info.AverageRating}}</p>
-  {% elif user_info.RecipeCount == 0 %}
-  <p>Käyttäjä ei ole lisännyt reseptejä.</p>
+  {% if found %}
+    <h1>{{user_info.Username}}</h1>
+    <h2>Reseptit</h2>
+    {% if user_info.RecipeCount == 1 %}
+      <p>Käyttäjällä {{user_info.Username}} on yksi resepti</p>
+      {% if user_info.AverageRating %}
+      <p>Käyttäjän saamien arvioiden keskiarvo on {{ user_info.AverageRating | round(2) }}</p>
+      {% endif %}
+    {% elif user_info.RecipeCount == 0 %}
+      <p>Käyttäjä ei ole lisännyt reseptejä.</p>
+    {% else %}
+      <h3>Julkaistuja reseptejä: {{user_info.RecipeCount}}</h3>
+    {% endif %}
+    {% for recipe in recipes %}
+      <h3>
+        <a href="/recipes/{{ recipe.RecipeId }}">{{recipe.RecipeName}}</a>
+        {% if session.username == user_info.Username%}
+        <a href="/recipes/{{ recipe.RecipeId }}/edit">Muokkaa</a>
+        {% endif %}
+      </h3>
+    {% endfor %}
+    <h2>Arviot</h2>
+    {% if user_info.ReviewCount == 1 %}
+      <p>Käyttäjä {{user_info.Username}} on antanut yhden arvion.</p>
+    {% elif user_info.ReviewCount == 0 %}
+      <p>Käyttäjä ei ole lisännyt arvioita.</p>
+    {% else %}
+      <h3>Annettuja arviota: {{user_info.ReviewCount}}</h3>
+    {% endif %}
+    {% for review in reviews %}
+      <h3><a href="/recipes/{{ review.RecipeId }}">{{review.RecipeName}}</a> {% if review.Rating %}Arvio: {{review.Rating}}{% endif %}</h3>
+    {% endfor %}
   {% else %}
-  <h3>Julkaistuja reseptejä: {{user_info.RecipeCount}}</h3>
+   <h1>KÄYTTÄJÄÄ EI LÖYTYNYT</h1>
   {% endif %}
-  {% for recipe in recipes %}
-  <h3><a href="/recipes/{{recipe.RecipeId}}">{{recipe.RecipeName}}</a></h3>
-  {% endfor %}
-  <h2>Arviot</h2>
-  {% if user_info.ReviewCount == 1 %}
-  <p>Käyttäjä {{user_info.Username}} on antanut yhden arvion.</p>
-  {% elif user_info.ReviewCount == 0 %}
-  <p>Käyttäjä ei ole lisännyt arvioita.</p>
-  {% else %}
-  <h3>Annettuja arviota: {{user_info.ReviewCount}}</h3>
-  {% endif %}
-  {% for review in reviews %}
-  <h3><a href="/recipes/{{review.RecipeId}}">{{review.RecipeName}}</a> {% if review.Rating %}Arvio: {{review.Rating}}{% endif %}</h3>
-  {% endfor %}
 </body>

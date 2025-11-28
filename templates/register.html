@@ -7,22 +7,24 @@
 
 <body>
   <p><a href="/">Etusivulle</a></p>
-  {% if error_msg %}
+  {% if error_msgs %}
   <h1>VIRHE REKISTERÖITYMISESSÄ</h1>
+  {% for error_msg in error_msgs %}
   <h2>{{error_msg}}</h2>
+  {% endfor %}
   {% endif %}
   <form action="/register" method="post">
     <p>
       Tunnus: <br />
-      <input type="text" name="username" />
+      <input type="text" name="username" value="{{ username }}" maxlength="{{ max_username_len }}" />
     </p>
     <p>
       Salasana: <br />
-      <input type="password" name="password" />
+      <input type="password" name="password" value="{{ password }}" maxlength="{{ max_password_len }}" />
     </p>
     <p>
       Salasana uudestaan: <br />
-      <input type="password" name="password_again" />
+      <input type="password" name="password_again" value="{{ password_again }}" maxlength="{{ max_password_len }}" />
     </p>
     <input type="submit" value="Luo tunnus" />
   </form>

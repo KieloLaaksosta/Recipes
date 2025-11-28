@@ -29,9 +29,11 @@
   </form>
   {% if recipes %}
   {% for recipe in recipes %}
-  <h1><a href="/recipes/{{recipe.Id}}">{{recipe.Name}}</a> by <a
-      href="/users/{{recipe.CreatorId}}">{{recipe.CreatorName}}</a> {% if recipe.AverageRating %}Arvio:
-    {{recipe.AverageRating}}{% endif %}</h1>
+  <h1>
+    <a href="/recipes/{{recipe.Id}}">{{recipe.Name}}</a> by <a
+    href="/users/{{recipe.CreatorId}}">{{recipe.CreatorName}}</a> 
+    {% if recipe.AverageRating %}Arvio: {{ recipe.AverageRating | round(2) }} {% endif %}
+  </h1>
   {% endfor %}
   {% else %}
   {% if did_search %}

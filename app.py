@@ -1,5 +1,4 @@
-from flask import Flask
-from flask import render_template, request
+from flask import Flask, render_template, request
 import config, account, recipes, reviews, views
 
 app = Flask(__name__)
@@ -12,14 +11,21 @@ def index():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        return account.register_post(request.form["username"], request.form["password"], request.form["password_again"])
+        return account.register_post(
+            request.form["username"], 
+            request.form["password"], 
+            request.form["password_again"]
+        )
     else:
         return account.register_get()
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        return account.login_post(request.form["username"], request.form["password"])
+        return account.login_post(
+            request.form["username"], 
+            request.form["password"]
+        )
     else:
         return account.login_get()
     
@@ -30,7 +36,12 @@ def logout():
 @app.route("/create_recipe", methods=["GET", "POST"])
 def create_recipe():
     if request.method == "POST":
-        return recipes.create_recipe_post(request.form["recipe_name"], request.form["ingredients"], request.form["instructions"], request.form.getlist("tags"))
+        return recipes.create_recipe_post(
+            request.form["recipe_name"], 
+            request.form["ingredients"], 
+            request.form["instructions"], 
+            request.form.getlist("tags")
+        )
     else:
         return recipes.create_recipe_get()
 
@@ -41,14 +52,30 @@ def search_recipe():
     else:
         return recipes.search_recipe_get()
 
-@app.route("/recipes/<int:recipe_id>", methods=["GET"])
+@app.route("/recipes/<int:recipe_id>", methods=["POST", "GET"])
 def show_recipe(recipe_id):
-    return views.show_recipe(recipe_id)
+    if request.method == "POST":
+        return reviews.create_review_post(
+            int(request.form["rating"]), 
+            request.form["comment"], 
+            request.form["recipe_id"]
+        )
+    else:
+        return views.show_recipe(recipe_id)
 
 @app.route("/users/<int:user_id>", methods=["GET"])
 def show_user(user_id):
     return views.show_user(user_id)
 
-@app.route("/create_review", methods=["POST"])
-def create_review():
-    return reviews.create_review(int(request.form["rating"]), request.form["comment"], request.form["recipe_id"])
+@app.route("/recipes/<int:recipe_id>/edit", methods=["POST", "GET"])
+def edit_recipe(recipe_id):
+    if request.method == "POST":
+        return recipes.edit_recipe_post(
+            recipe_id,
+            request.form["recipe_name"],
+            request.form["instructions"],
+            request.form["ingredients"],
+            request.form.getlist("tags")
+        )
+    else:
+        return recipes.edit_recipe_get(recipe_id)

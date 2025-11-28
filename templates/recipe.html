@@ -7,46 +7,60 @@
 
 <body>
   <p><a href="/">Etusivulle</a></p>
-  <h1>{{recipe.Name}}</h1>
-  <p><a href="/users/{{recipe.CreatorId}}">{{recipe.CreatorName}}</a></p>
-  <h3>Raaka-aineet</h3>
-  <p>{{recipe.Ingredients}}</p>
-  <h3>Ohjeet</h3>
-  <p>{{recipe.Instructions}}</p>
-  <h4>Tunnisteet</h4>
-  <p>
-    {% if tag_names %}
-    {% for tag_name in tag_names %}
-    <li>{{tag_name}}</li>
-    {% endfor %}
-    {% else %}
-    Ei tunnisteita
+  {% if found %}
+    <h1>{{recipe.Name}}</h1>
+    <p><a href="/users/{{recipe.CreatorId}}">{{recipe.CreatorName}}</a></p>
+    {% if session.username == recipe.CreatorName%}
+    <h3><a href="/recipes/{{ RecipeId }}/edit">Muokkaa</a></h3>
     {% endif %}
-  </p>
-  {% if session.username %}
-  <h2>Arvostele</h2>
-  <form action="/create_review" method="POST">
-    <input type="hidden" name="recipe_id" value="{{recipe_id}}" />
+    <h3>Raaka-aineet</h3>
+    <p>{{recipe.Ingredients}}</p>
+    <h3>Ohjeet</h3>
+    <p>{{recipe.Instructions}}</p>
+    <h4>Tunnisteet</h4>
     <p>
-      Arvio: <br />
-      <input type="range" min="1" max="5" value="1" name="rating">
-    </p>
-    <p>
-      Kommentti: <br />
-      <textarea rows="10" cols="80" name="comment"></textarea>
-    </p>
-    <input type="submit" value="Lähetä arostelu" />
-  </form>
-  {% endif %}
-  <h3>Arvostelut</h3>
-  {% if reviews %}
-    {% for review in reviews %}
-      <h4><a href="/users/{{review.ReviewerId}}">{{review.ReviewerName}}</a>: {{review.Rating}} / 5</h4>
-      {% if review.Comment %}
-        <p>{{review.Comment}}</p>
+      {% if tag_names %}
+        {% for tag_name in tag_names %}
+          <li>{{tag_name.TagName}}</li>
+        {% endfor %}
+      {% else %}
+        Ei tunnisteita
       {% endif %}
-    {% endfor %}
+    </p>
+    {% if session.username %}
+      <h2>Arvostele</h2>
+      <form action="" method="POST">
+        <input type="hidden" name="recipe_id" value="{{ recipe_id }}" />
+        <input type="hidden" name="csfr_token" value="{{ session.csfr_token }}" />
+        <p>
+          Arvio: <br />
+          <input type="range" min="1" max="5" value="1" name="rating">
+        </p>
+        <p>
+          Kommentti: <br />
+          <textarea rows="10" cols="80" name="comment"></textarea>
+        </p>
+        <input type="submit" value="Lähetä arostelu" />
+      </form>
+    {% endif %}
+    <h3>Arvostelut</h3>
+    {% if not session.username %}
+    <p>
+      <a href="/register">Luo käyttäjä lisätäksesi arvostelu</a></p>
+      <a href="/login">Kirjaudu sisään lisätäksesi arvostelu</a>
+    </p>
+    {% endif %}
+    {% if reviews %}
+      {% for review in reviews %}
+        <h4><a href="/users/{{review.ReviewerId}}">{{ review.ReviewerName }}</a>: {{ review.Rating }} / 5</h4>
+        {% if review.Comment %}
+          <p>{{review.Comment}}</p>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      <p>Ei arvosteluja</p>
+    {% endif %}
   {% else %}
-    <p>Ei arvosteluja</p>
+    <h1>RESEPTIÄ EI LÖYTYNYT</h1>
   {% endif %}
 </body>

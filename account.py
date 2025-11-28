@@ -1,12 +1,9 @@
-import sqlite3
+import sqlite3, secrets
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import render_template, session, redirect
+from flask import render_template, redirect, session
 import database, validation
 
-def try_create_account(username : str, password : str, password_again : str) -> tuple:
-    if password != password_again:
-        return "Salasanat eivät täsmää."
-    
+def try_create_account(username : str, password : str) -> tuple:    
     hash = generate_password_hash(password)
     try:
         database.add_account(username, hash)
@@ -35,39 +32,54 @@ def register_get():
 
 def register_post(username: str, password: str, password_again: str):
     error_code, username = validation.limit_lenght(username, validation.MIN_USERNAME_LENGTH, validation.MAX_USERNAME_LENGTH)
+    error_msgs = []
     if(validation.contains_whitespace(username)):
-        error_msg = "Käyttäjänimessä ei saa olla välilyöntejä tai rivinvaihtoja,"
-
-    error_msg = None
+        error_msgs.append("Käyttäjänimessä ei saa olla välilyöntejä tai rivinvaihtoja.")
 
     if error_code != validation.VALID:
         if error_code == validation.INVALID_TYPE:
-            error_msg = f"Käyttänimi tulee antaa."
+            error_msgs.append("Käyttänimi tulee antaa.")
         if error_code == validation.TOO_LONG:
-            error_msg = f"Käyttänimen tulee olla enintään {validation.MAX_USERNAME_LENGTH} merkkiä pitkä."
+            error_msgs.append(f"Käyttänimen tulee olla enintään {validation.MAX_USERNAME_LENGTH} merkkiä pitkä.")
         if error_code == validation.TOO_SHORT:
-            error_msg = f"Käyttänimen tulee olla vähintään {validation.MIN_USERNAME_LENGTH} merkkiä pitkä."
+            error_msgs.append(f"Käyttänimen tulee olla vähintään {validation.MIN_USERNAME_LENGTH} merkkiä pitkä.")
     
     error_code, password = validation.limit_lenght(password, validation.MIN_PASSWORD_LENGHT, validation.MAX_PASSWORD_LENGHT)
     if error_code != validation.VALID:
         if error_code == validation.INVALID_TYPE:
-            error_msg = "Salasana tulee antaa."
+            error_msgs.append("Salasana tulee antaa.")
         if error_code == validation.TOO_SHORT:
-            error_msg = f"Salasanan tulee olla vähintään {validation.MIN_PASSWORD_LENGHT} merkkiä pitkä."
+            error_msgs.append(f"Salasanan tulee olla vähintään {validation.MIN_PASSWORD_LENGHT} merkkiä pitkä.")
         if error_code == validation.TOO_LONG:
-            error_msg = f"Salasanan tulee olla enintään {validation.MAX_PASSWORD_LENGHT} merkkiä pitkä."
+            error_msgs.append(f"Salasanan tulee olla enintään {validation.MAX_PASSWORD_LENGHT} merkkiä pitkä.")
 
     _, password_again = validation.limit_lenght(password_again, max=validation.MAX_PASSWORD_LENGHT)
 
-    if not error_msg:
-        error_msg = try_create_account(username, password, password_again)
+    if password != password_again:
+        error_msgs.append("Salasanat eivät täsmää.")
+
+    print(error_msgs)
+
+    if len(error_msgs) == 0:
+        new_error = try_create_account(username, password, password_again)
+        if new_error:
+            error_msgs.append(new_error)
     
-    if error_msg == None:
+    if len(error_msgs) == 0:
         session["username"] = username
         session["user_id"] = database.get_user_id(username)[0]["Id"]
+        session["csfr_token"] = secrets.token_hex(16)
 
-    if error_msg:
-        return render_template("register.html", error_msg=error_msg)
+    if len(error_msgs) != 0:
+        return render_template(
+            "register.html", 
+            error_msgs=error_msgs,
+            username=username,
+            password=password,
+            password_again=password_again,
+            max_username_len=validation.MAX_USERNAME_LENGTH,
+            max_password_len=validation.MAX_PASSWORD_LENGHT
+        )
     else:
         return redirect("/")
 
@@ -78,14 +90,28 @@ def login_post(username: str, password: str):
     if check_password(username, password):
         session["username"] = username
         session["user_id"] = database.get_user_id(username)[0]["Id"]
+        session["csfr_token"] = secrets.token_hex(16)
+
         return redirect("/")
     else:
-        error_msg = "Väärä käyttäjätunnus tai salasana"
-        return render_template("error_pages/login_account.html", error_msg)
+        return render_template(
+            "login.html", 
+            error_msg="Väärä käyttäjätunnus tai salasana",
+            username=username,
+            password=password,
+            max_username_len=validation.MAX_USERNAME_LENGTH,
+            max_password_len=validation.MAX_PASSWORD_LENGHT
+        )
 
 def login_get():
-    return render_template("login.html")
+    return render_template(
+        "login.html",
+        max_username_len=validation.MAX_USERNAME_LENGTH,
+        max_password_len=validation.MAX_PASSWORD_LENGHT
+    )
 
 def log_out():
     del session["username"]
+    del session["user_id"]
+    del session["csfr_token"]
     return redirect("/")

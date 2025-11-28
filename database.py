@@ -154,14 +154,49 @@ def query_recipes(search: str, tag_ids: list):
     finally:
         connection.close()
 
-def get_recipe(recipe_id : int):
+def get_recipe(recipe_id: int):
+    connection = get_connection()
+    try:
+        recipe = query(
+            """
+            SELECT
+                R.Name, R.Ingredients, R.Instructions, U.Username AS CreatorName, U.Id AS CreatorId
+            FROM 
+                Recipes AS R
+                JOIN Users AS U ON U.Id = R.CreatorId
+            WHERE 
+                R.Id = ?
+            """,
+            [recipe_id],
+            connection
+        )
+
+        tags = query(
+            """
+            SELECT 
+                T.Id AS TagId
+            FROM  
+                Tags AS T
+                JOIN TagJoin AS TJ ON T.Id = TJ.TagId
+            WHERE
+                TJ.RecipeId = ?
+            """,
+            [recipe_id],
+            connection
+        )
+
+        return recipe, tags
+    finally:
+        connection.close()
+
+def get_recipe_and_reviews(recipe_id: int):
     connection = get_connection()
 
     try:
         recipe = query(
             """
             SELECT
-                R.Id, R.Name, R.Ingredients, R.Instructions, U.Username AS CreatorName, U.Id AS CreatorId
+                R.Name AS Name, R.Ingredients AS Ingredients, R.Instructions AS Instructions, U.Username AS CreatorName, U.Id AS CreatorId
             FROM 
                 Recipes AS R
                 JOIN Users AS U ON U.Id = R.CreatorId
@@ -200,15 +235,11 @@ def get_recipe(recipe_id : int):
             connection
         )
         
-        tag_names = []
-        for row in tags:
-            tag_names.append(row["TagName"])
-        
-        return (recipe, tag_names, reviews)
+        return recipe, (tag["TagName"] for tag in tags), reviews
     finally:
         connection.close()
 
-def get_user_view(user_id : int) -> tuple:
+def get_user_view(user_id: int) -> tuple:
     connection = get_connection()
 
     try:
@@ -297,5 +328,31 @@ def add_review(reviewer_id: int, recipe_id: int, rating: int, comment: str):
             [reviewer_id, recipe_id, rating, comment],
             connection
         )
+    finally:
+        connection.close()
+
+def edit_recipe(recipe_id: int, recipe_name: str, instructions: str, ingredients: str, tags: list):
+    connection = get_connection()
+
+    try:
+        execute(
+            "UPDATE Recipes SET Name = ?, Instructions = ?, Ingredients = ? WHERE Id = ?",
+            [recipe_name, instructions, ingredients, recipe_id],
+            connection
+        )
+        execute(
+            "DELETE FROM TagJoin WHERE RecipeId = ?",
+            [recipe_id],
+            connection
+        )
+        for tag_id in tags:
+            execute(
+                """
+                INSERT INTO TagJoin (RecipeId, TagId) 
+                VALUES (?, ?)
+                """,
+                [recipe_id, tag_id],
+                connection
+            )
     finally:
         connection.close()
