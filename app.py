@@ -1,8 +1,26 @@
-from flask import Flask, render_template, request
-import config, account, recipes, reviews, views
+from flask import Flask, render_template, abort, session, request
+import config, account, recipes, reviews, views, database
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
+
+def check_csfr_token(token):
+    session_token = session.get("csfr_token")
+    
+    if not (session_token and token and token == session_token):
+        abort(403)     
+
+def check_login():
+    if "username" not in session or "user_id" not in session:
+        abort(403)
+    if database.get_user_id(session["username"]) != session["user_id"]:
+        logout() #username doesn't match what's in database. This indicates session tokens aren't synchronized with database. Logout to force new login. 
+        abort(403)
+
+def check_recipe_ownership(recipe_id: int):
+    check_login()
+    if session["user_id"] != database.get_recipe_owner_id(recipe_id)[0]["Id"]:
+        abort(403)
 
 @app.route("/")
 def index():
@@ -35,7 +53,10 @@ def logout():
 
 @app.route("/create_recipe", methods=["GET", "POST"])
 def create_recipe():
+    check_login()
+
     if request.method == "POST":
+        check_csfr_token(request.form["csrf_token"])
         return recipes.create_recipe_post(
             request.form["recipe_name"], 
             request.form["ingredients"], 
@@ -69,7 +90,9 @@ def show_user(user_id):
 
 @app.route("/recipes/<int:recipe_id>/edit", methods=["POST", "GET"])
 def edit_recipe(recipe_id):
+    check_recipe_ownership(recipe_id)
     if request.method == "POST":
+        check_csfr_token(request.form["csrf_token"])
         return recipes.edit_recipe_post(
             recipe_id,
             request.form["recipe_name"],

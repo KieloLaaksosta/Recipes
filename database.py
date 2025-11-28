@@ -356,3 +356,22 @@ def edit_recipe(recipe_id: int, recipe_name: str, instructions: str, ingredients
             )
     finally:
         connection.close()
+
+def get_recipe_owner_id(recipe_id: int):
+    connection = get_connection()
+
+    try:
+        return query(
+            """
+            SELECT
+                CreatorId AS Id
+            FROM
+                Recipes
+            WHERE
+                Id = ?
+            """,
+            [recipe_id],
+            connection
+        )
+    finally:
+        connection.close()
