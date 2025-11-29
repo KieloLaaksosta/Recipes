@@ -19,8 +19,7 @@
     </p>
     <input type="submit" value="Tallenna muutokset" />
   </form>
-  <form>
-    <form action="/reviews/{{ review_id }}/delete" method="post">
+  <form action="/reviews/{{ review_id }}/delete" method="post">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <p><input type="submit" value="Poista arvio pysyvästi" /></p>
   </form>
