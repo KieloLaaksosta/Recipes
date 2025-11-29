@@ -9,8 +9,8 @@
   <p><a href="/">Etusivulle</a></p>
   {% if found %}
     <h1>{{recipe.Name}}</h1>
-    <p><a href="/users/{{recipe.CreatorId}}">{{recipe.CreatorName}}</a></p>
-    {% if session.user_id == recipe.CreatorName%}
+    <p>By <a href="/users/{{recipe.CreatorId}}">{{recipe.CreatorName}}</a></p>
+    {% if session.user_id == recipe.CreatorId%}
     <h3><a href="/recipes/{{ RecipeId }}/edit">Muokkaa</a></h3>
     {% endif %}
     <h3>Raaka-aineet</h3>

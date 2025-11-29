@@ -29,7 +29,7 @@
     {% for recipe in recipes %}
       <h3>
         <a href="/recipes/{{ recipe.RecipeId }}">{{recipe.RecipeName}}</a>
-        {% if session.username == user_info.Username%}
+        {% if session.user_id == user_info.UserId %}
         <a href="/recipes/{{ recipe.RecipeId }}/edit">Muokkaa</a>
         {% endif %}
       </h3>

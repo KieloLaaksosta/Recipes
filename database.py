@@ -113,7 +113,7 @@ def query_recipes(search: str, tag_ids: list, offset: int, limit: int):
             return query(
                 """
                 SELECT
-                    R.Id, R.Name, U.Username AS CreatorName, U.Id AS CreatorId, AVG(Reviews.Rating) AS AverageRating
+                    R.Id AS Id, R.Name AS Name, U.Username AS CreatorName, U.Id AS CreatorId, AVG(Reviews.Rating) AS AverageRating
                 FROM
                     Recipes AS R
                     JOIN Users AS U ON U.Id = R.CreatorId
@@ -230,7 +230,7 @@ def get_recipe_and_reviews(recipe_id: int, offset: int, limit: int):
         reviews = query(
             """
             SELECT
-                U.Id AS ReviewerId, U.Username AS ReviewerName, R.rating, R.comment
+                R.Id AS Id, U.Id AS ReviewerId, U.Username AS ReviewerName, R.rating, R.comment
             FROM
                 Reviews AS R
                 JOIN Users AS U ON R.ReviewerId == U.id
@@ -257,6 +257,7 @@ def get_user_view(user_id: int, recipe_offset: int, recipe_limit: int, review_of
             """
             SELECT
                 U.Username AS Username,
+                U.Id AS UserId,
                 COALESCE(R.RecipeCount, 0) AS RecipeCount,
                 COALESCE(SR.ReviewCount, 0) AS ReviewCount,
                 RR.AverageRating
@@ -318,7 +319,7 @@ def get_user_view(user_id: int, recipe_offset: int, recipe_limit: int, review_of
         reviews = query(
             """
             SELECT
-                Recipes.Name AS RecipeName, Recipes.Id AS RecipeId, Reviews.Rating AS Rating
+                Reviews.Id AS ID, Recipes.Name AS RecipeName, Recipes.Id AS RecipeId, Reviews.Rating AS Rating
             FROM
                 Users AS U
                 JOIN Reviews ON Reviews.ReviewerId = U.Id
