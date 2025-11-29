@@ -1,15 +1,19 @@
 import sqlite3
 from flask import g
 
-def last_insert_id():
-    return g.last_insert_id
-
 def get_connection():
     connection = sqlite3.connect("database.db")
     connection.execute("PRAGMA foreign_keys = ON")
     connection.row_factory = sqlite3.Row
 
     return connection
+
+def get_placeholders(n: int) -> str:
+    placeholders = ["?"] * n
+    return ", ".join(placeholders)
+
+def last_insert_id():
+    return g.last_insert_id
 
 def execute(sql: str, params, connection):
     try:
@@ -23,18 +27,18 @@ def execute(sql: str, params, connection):
 def query(sql: str, params, connection):
     try:
         result = connection.execute(sql, params).fetchall()
-        connection.commit()
     except Exception as e:
         connection.rollback()
         raise e
 
     return result
 
-def get_placeholders(n: int) -> str:
-    placeholders = ["?"] * n
-    return ", ".join(placeholders)
+#######
+#Users#
+#######
 
 def add_account(username: str, hashed_password):
+    """Adds a new user account."""
     connection = get_connection()
 
     try:
@@ -47,6 +51,7 @@ def add_account(username: str, hashed_password):
         connection.close()
 
 def get_password(username: str):
+    """Retrieves the hashed password for a given username."""
     connection = get_connection()
 
     try:
@@ -59,6 +64,7 @@ def get_password(username: str):
         connection.close()
 
 def get_user_id(username: str):
+    """Retrieves the Id for a given username."""
     connection = get_connection()
 
     try:
@@ -69,6 +75,113 @@ def get_user_id(username: str):
         )
     finally:
         connection.close()
+
+def get_user_view(user_id: int, recipe_offset: int, recipe_limit: int, review_offset: int, review_limit: int) -> tuple:
+    """Retrieves detailed user information, including recipes and reviews."""
+    connection = get_connection()
+
+    try:
+        user_info = query(
+            """
+            SELECT
+                U.Username AS Username,
+                U.Id AS UserId,
+                COALESCE(R.RecipeCount, 0) AS RecipeCount,
+                COALESCE(SR.ReviewCount, 0) AS ReviewCount,
+                RR.AverageRating
+            FROM
+                Users AS U
+            LEFT JOIN (
+                SELECT
+                    CreatorId,
+                    COUNT(Id) AS RecipeCount
+                FROM
+                    Recipes
+                GROUP BY
+                    CreatorId
+            ) AS R ON R.CreatorId = U.Id
+
+            LEFT JOIN (
+                SELECT
+                    ReviewerId,
+                    COUNT(Id) AS ReviewCount
+                FROM
+                    Reviews
+                GROUP BY
+                    ReviewerId
+            ) AS SR ON SR.ReviewerId = U.Id
+
+            LEFT JOIN (
+                SELECT
+                    Recipes.CreatorId,
+                    AVG(Reviews.Rating) AS AverageRating
+                FROM
+                    Recipes
+                    JOIN Reviews ON Reviews.RecipeId = Recipes.Id
+                GROUP BY
+                    Recipes.CreatorId
+            ) AS RR ON RR.CreatorId = U.Id
+            WHERE U.Id = ?;
+            """,
+            [user_id],
+            connection
+        )
+
+        recipes = query(
+            """
+            SELECT
+                R.Name AS RecipeName, R.Id AS RecipeId
+            FROM
+                Users AS U
+                JOIN Recipes AS R ON R.CreatorId = U.Id
+            WHERE U.Id = ?
+            LIMIT
+                ?
+            OFFSET
+                ?
+            """,
+            [user_id, recipe_limit, recipe_offset],
+            connection
+        )
+
+        reviews = query(
+            """
+            SELECT
+                Reviews.Id AS ID, Recipes.Name AS RecipeName, Recipes.Id AS RecipeId, Reviews.Rating AS Rating
+            FROM
+                Users AS U
+                JOIN Reviews ON Reviews.ReviewerId = U.Id
+                JOIN Recipes ON Recipes.Id = Reviews.RecipeId
+            WHERE U.Id = ?
+            LIMIT
+                ?
+            OFFSET
+                ?
+            """,
+            [user_id, review_limit, review_offset],
+            connection
+        )
+
+        return (user_info, recipes, reviews)
+    finally:
+        connection.close()
+
+def delete_user(user_id: int):
+    """Deletes a user account."""
+    connection = get_connection()
+
+    try:
+        return execute(
+            "DELETE FROM Users WHERE Id = ?;",
+            [user_id],
+            connection
+        )
+    finally:
+        connection.close()
+
+#########
+#Recipes#
+#########
 
 def add_recipe(creator, recipe_name: str, ingredients: str, instructions: str, tag_ids: list):
     connection = get_connection()
@@ -97,18 +210,11 @@ def add_recipe(creator, recipe_name: str, ingredients: str, instructions: str, t
     finally:
         connection.close()
 
-def get_available_tags():
-    connection = get_connection()
-
-    try:
-        return query("SELECT Id, Name FROM Tags ORDER BY Id", [], connection)
-    finally:
-        connection.close()
-
 def query_recipes(search: str, tag_ids: list, offset: int, limit: int):
     connection = get_connection()
 
     try:
+        search_pattern = f"%{search}%"
         if len(tag_ids) == 0:
             return query(
                 """
@@ -130,22 +236,24 @@ def query_recipes(search: str, tag_ids: list, offset: int, limit: int):
                     ?
                 """,
                 [
-                    search,
-                    search,
-                    search,
+                    search_pattern,
+                    search_pattern,
+                    search_pattern,
                     limit,
                     offset
                 ],
                 connection
             )
+
         return query(
             f"""
             SELECT
-                R.Id, R.Name, U.Username AS CreatorName, U.Id AS CreatorId
+                R.Id, R.Name, U.Username AS CreatorName, U.Id AS CreatorId, AVG(Reviews.Rating) AS AverageRating
             FROM
                 Recipes AS R
                 JOIN Users AS U ON U.Id = R.CreatorId
                 JOIN TagJoin TJ ON TJ.RecipeId = R.Id
+                LEFT JOIN Reviews ON Reviews.RecipeId = R.Id
             WHERE
                 (R.Name LIKE ? OR R.Instructions LIKE ? OR R.Ingredients LIKE ?)
                 AND TJ.TagId IN ({get_placeholders(len(tag_ids))})
@@ -154,7 +262,7 @@ def query_recipes(search: str, tag_ids: list, offset: int, limit: int):
             HAVING
                 COUNT(DISTINCT TJ.TagId) = ?
             """,
-            3 * [search] + tag_ids + [len(tag_ids)],
+            [search_pattern, search_pattern, search_pattern] + tag_ids + [len(tag_ids)],
             connection
         )
     finally:
@@ -249,107 +357,6 @@ def get_recipe_and_reviews(recipe_id: int, offset: int, limit: int):
     finally:
         connection.close()
 
-def get_user_view(user_id: int, recipe_offset: int, recipe_limit: int, review_offset: int, review_limit: int) -> tuple:
-    connection = get_connection()
-
-    try:
-        user_info = query(
-            """
-            SELECT
-                U.Username AS Username,
-                U.Id AS UserId,
-                COALESCE(R.RecipeCount, 0) AS RecipeCount,
-                COALESCE(SR.ReviewCount, 0) AS ReviewCount,
-                RR.AverageRating
-            FROM
-                Users AS U
-            LEFT JOIN (
-                SELECT
-                    CreatorId,
-                    COUNT(Id) AS RecipeCount
-                FROM
-                    Recipes
-                GROUP BY
-                    CreatorId
-            ) AS R ON R.CreatorId = U.Id
-
-            LEFT JOIN (
-                SELECT
-                    ReviewerId,
-                    COUNT(Id) AS ReviewCount
-                FROM
-                    Reviews
-                GROUP BY
-                    ReviewerId
-            ) AS SR ON SR.ReviewerId = U.Id
-
-            LEFT JOIN (
-                SELECT
-                    Recipes.CreatorId,
-                    AVG(Reviews.Rating) AS AverageRating
-                FROM
-                    Recipes
-                    JOIN Reviews ON Reviews.RecipeId = Recipes.Id
-                GROUP BY
-                    Recipes.CreatorId
-            ) AS RR ON RR.CreatorId = U.Id
-            WHERE U.Id = ?;
-            """,
-            [user_id],
-            connection
-        )
-
-        recipes = query(
-            """
-            SELECT
-                R.Name AS RecipeName, R.Id AS RecipeId
-            FROM
-                Users AS U
-                JOIN Recipes AS R ON R.CreatorId = U.Id
-            WHERE U.Id = ?
-            LIMIT
-                ?
-            OFFSET
-                ?
-            """,
-            [user_id, recipe_limit, recipe_offset],
-            connection
-        )
-
-        reviews = query(
-            """
-            SELECT
-                Reviews.Id AS ID, Recipes.Name AS RecipeName, Recipes.Id AS RecipeId, Reviews.Rating AS Rating
-            FROM
-                Users AS U
-                JOIN Reviews ON Reviews.ReviewerId = U.Id
-                JOIN Recipes ON Recipes.Id = Reviews.RecipeId
-            WHERE U.Id = ?
-            LIMIT
-                ?
-            OFFSET
-                ?
-            """,
-            [user_id, review_limit, review_offset],
-            connection
-        )
-
-        return (user_info, recipes, reviews)
-    finally:
-        connection.close()
-
-def add_review(reviewer_id: int, recipe_id: int, rating: int, comment: str):
-    connection = get_connection()
-
-    try:
-        execute(
-            "INSERT INTO Reviews (Id, ReviewerId, RecipeId, Rating, Comment) VALUES (NULL, ?, ?, ?, ?)",
-            [reviewer_id, recipe_id, rating, comment],
-            connection
-        )
-    finally:
-        connection.close()
-
 def edit_recipe(recipe_id: int, recipe_name: str, instructions: str, ingredients: str, tags: list):
     connection = get_connection()
 
@@ -359,11 +366,13 @@ def edit_recipe(recipe_id: int, recipe_name: str, instructions: str, ingredients
             [recipe_name, instructions, ingredients, recipe_id],
             connection
         )
+        #Remove previous tags
         execute(
             "DELETE FROM TagJoin WHERE RecipeId = ?",
             [recipe_id],
             connection
         )
+        #Add new tags
         for tag_id in tags:
             execute(
                 """
@@ -394,27 +403,9 @@ def get_recipe_owner_id(recipe_id: int):
         )
     finally:
         connection.close()
-        
-def get_review_owner_id(recipe_id: int):
-    connection = get_connection()
-
-    try:
-        return query(
-            """
-            SELECT
-                ReviewerId AS Id
-            FROM
-                Reviews
-            WHERE
-                Id = ?
-            """,
-            [recipe_id],
-            connection
-        )
-    finally:
-        connection.close()
 
 def delete_recipe(recipe_id: int):
+    """Deletes a recipe."""
     connection = get_connection()
 
     try:
@@ -426,15 +417,16 @@ def delete_recipe(recipe_id: int):
     finally:
         connection.close()
 
-def delete_user(user_id: int):
+######
+#Tags#
+######
+
+def get_available_tags():
+    """Retrieves all available tags."""
     connection = get_connection()
 
     try:
-        return execute(
-            "DELETE FROM Users WHERE Id = ?;",
-            [user_id],
-            connection
-        )
+        return query("SELECT Id, Name FROM Tags ORDER BY Id", [], connection)
     finally:
         connection.close()
 
@@ -449,3 +441,4 @@ def delete_review(review_id: int):
         )
     finally:
         connection.close()
+        
