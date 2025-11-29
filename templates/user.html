@@ -13,7 +13,7 @@
     {% if user_info.RecipeCount == 1 %}
       <p>Käyttäjällä {{user_info.Username}} on yksi resepti</p>
       {% if user_info.AverageRating %}
-      <p>Käyttäjän saamien arvioiden keskiarvo on {{ user_info.AverageRating | round(2) }}</p>
+        <p>Käyttäjän saamien arvioiden keskiarvo on {{ user_info.AverageRating | round(2) }}</p>
       {% endif %}
     {% elif user_info.RecipeCount == 0 %}
       <p>Käyttäjä ei ole lisännyt reseptejä.</p>
@@ -30,7 +30,7 @@
       <h3>
         <a href="/recipes/{{ recipe.RecipeId }}">{{recipe.RecipeName}}</a>
         {% if session.user_id == user_info.UserId %}
-        <a href="/recipes/{{ recipe.RecipeId }}/edit">Muokkaa</a>
+          <a href="/recipes/{{ recipe.RecipeId }}/edit">Muokkaa</a>
         {% endif %}
       </h3>
     {% endfor %}
@@ -50,8 +50,24 @@
     {% endif %}
     {% for review in reviews %}
       <h3><a href="/recipes/{{ review.RecipeId }}">{{review.RecipeName}}</a> {% if review.Rating %}Arvio: {{review.Rating}}{% endif %}</h3>
+      {% if session.user_id == user_info.UserId %}
+        <form action="/reviews/{{ review.Id }}/delete" method="post">
+          <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+          <p><input type="submit" value="Poista arvio pysyvästi" /></p>
+        </form>
+      {% endif %}
     {% endfor %}
+    {% if session.user_id == user_info.UserId %}
+      <form action="/users/{{ user_info.UserId }}/delete" method="post">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+        <p>
+          Anna salasanasi poistaaksesi tilisi: <br />
+          <input type="text" name="password" maxlength="{{ max_password_len }}" />
+        </p>
+        <p><input type="submit" value="Poista tili pysyvästi" /></p>
+      </form>
+    {% endif %}
   {% else %}
-   <h1>KÄYTTÄJÄÄ EI LÖYTYNYT</h1>
+    <h1>KÄYTTÄJÄÄ EI LÖYTYNYT</h1>
   {% endif %}
 </body>

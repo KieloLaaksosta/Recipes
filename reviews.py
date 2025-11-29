@@ -1,4 +1,4 @@
-from flask import session
+from flask import redirect, session
 import validation
 import views
 import database
@@ -9,3 +9,7 @@ def create_review_post(rating: int, comment: str, recipe_id: int, page: int):
 
     database.add_review(session["user_id"], recipe_id, rating, comment)
     return views.show_recipe(recipe_id, page)
+
+def delete(review_id: int):
+    database.delete_review(review_id)
+    return redirect("/")

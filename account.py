@@ -117,3 +117,9 @@ def log_out():
     session.pop("user_id", None)
     session.pop("csrf_token", None)
     return redirect("/")
+
+def delete(username: str, user_id: int, password: str, failure_page: str):
+    if check_password(username, password):
+        database.delete_user(user_id)
+        return log_out()
+    return redirect(failure_page)

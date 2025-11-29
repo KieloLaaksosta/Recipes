@@ -11,7 +11,7 @@
     <h1>{{recipe.Name}}</h1>
     <p>By <a href="/users/{{recipe.CreatorId}}">{{recipe.CreatorName}}</a></p>
     {% if session.user_id == recipe.CreatorId%}
-    <h3><a href="/recipes/{{ RecipeId }}/edit">Muokkaa</a></h3>
+      <h3><a href="/recipes/{{ RecipeId }}/edit">Muokkaa</a></h3>
     {% endif %}
     <h3>Raaka-aineet</h3>
     <p>{{ recipe.Ingredients | show_lines }}</p>
@@ -27,6 +27,13 @@
         Ei tunnisteita
       {% endif %}
     </p>
+    {% if session.user_id == recipe.CreatorId%}
+      <form action="/recipes/{{ RecipeId }}/delete" method="post">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+        <p><input type="submit" value="Poista resepti pysyvästi" /></p>
+      </form>
+    {% endif %}
+    <h3>Arvostelut</h3>
     {% if session.user_id %}
       <h2>Arvostele</h2>
       <form action="" method="POST">
@@ -43,12 +50,11 @@
         <input type="submit" value="Lähetä arostelu" />
       </form>
     {% endif %}
-    <h3>Arvostelut</h3>
     {% if not session.user_id %}
-    <p>
-      <a href="/register">Luo käyttäjä lisätäksesi arvostelu</a></p>
-      <a href="/login">Kirjaudu sisään lisätäksesi arvostelu</a>
-    </p>
+      <p>
+        <a href="/register">Luo käyttäjä lisätäksesi arvostelu</a></p>
+        <a href="/login">Kirjaudu sisään lisätäksesi arvostelu</a>
+      </p>
     {% endif %}
     {% if page %}
       <p><a href="/recipes/{{ recipe_id }}/{{ page - 1 }}">Edellinen sivu</a></p>
@@ -58,6 +64,12 @@
         <h4><a href="/users/{{review.ReviewerId}}">{{ review.ReviewerName }}</a>: {{ review.Rating }} / 5</h4>
         {% if review.Comment %}
           <p>{{ review.Comment | show_lines }}</p>
+        {% endif %}
+        {% if session.user_id == review.ReviewerId%}
+           <form action="/reviews/{{ review.Id }}/delete" method="post">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+            <p><input type="submit" value="Poista arvio pysyvästi" /></p>
+          </form>
         {% endif %}
       {% endfor %}
       <p><a href="/recipes/{{ recipe_id }}/{{ page + 1 }}">Seuraava sivu</a></p>

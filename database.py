@@ -394,3 +394,58 @@ def get_recipe_owner_id(recipe_id: int):
         )
     finally:
         connection.close()
+        
+def get_review_owner_id(recipe_id: int):
+    connection = get_connection()
+
+    try:
+        return query(
+            """
+            SELECT
+                ReviewerId AS Id
+            FROM
+                Reviews
+            WHERE
+                Id = ?
+            """,
+            [recipe_id],
+            connection
+        )
+    finally:
+        connection.close()
+
+def delete_recipe(recipe_id: int):
+    connection = get_connection()
+
+    try:
+        return execute(
+            "DELETE FROM Recipes WHERE Id = ?;",
+            [recipe_id],
+            connection
+        )
+    finally:
+        connection.close()
+
+def delete_user(user_id: int):
+    connection = get_connection()
+
+    try:
+        return execute(
+            "DELETE FROM Users WHERE Id = ?;",
+            [user_id],
+            connection
+        )
+    finally:
+        connection.close()
+
+def delete_review(review_id: int):
+    connection = get_connection()
+
+    try:
+        return execute(
+            "DELETE FROM Reviews WHERE Id = ?;",
+            [review_id],
+            connection
+        )
+    finally:
+        connection.close()

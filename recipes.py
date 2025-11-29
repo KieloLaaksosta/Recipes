@@ -136,3 +136,7 @@ def edit_recipe_post(recipe_id: int, recipe_name: str, instructions: str, ingred
         max_ingredients_len=validation.MAX_INGREDIENTS_LENGTH,
         max_instructions_len=validation.MAX_INSCTRUCTIONS_LENGTH,
     )
+
+def delete(recipe_id: int):
+    database.delete_recipe(recipe_id)
+    return redirect("/")

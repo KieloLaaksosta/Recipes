@@ -31,7 +31,18 @@ def check_login():
 
 def check_recipe_ownership(recipe_id: int):
     check_login()
-    if session["user_id"] != database.get_recipe_owner_id(recipe_id)[0]["Id"]:
+    recipe = database.get_recipe_owner_id(recipe_id)
+    if len(recipe) < 1:
+        abort(404) 
+    if session["user_id"] != recipe[0]["Id"]:
+        abort(403)
+        
+def check_review_ownership(review_id: int):
+    check_login()
+    review = database.get_review_owner_id(review_id)
+    if len(review) < 1:
+        abort(404) 
+    if session["user_id"] != review[0]["Id"]:
         abort(403)
 
 @app.route("/")
@@ -118,3 +129,33 @@ def edit_recipe(recipe_id):
             request.form.getlist("tags")
         )
     return recipes.edit_recipe_get(recipe_id)
+
+@app.route("/recipes/<int:recipe_id>/delete", methods=["POST"])
+def delete_recipe(recipe_id):
+    check_recipe_ownership(recipe_id)
+    check_csrf_token(request.form["csrf_token"])
+
+    return recipes.delete(recipe_id)
+
+@app.route("/users/<int:user_id>/delete", methods=["POST"])
+def delete_user(user_id):
+    check_login()
+    check_csrf_token(request.form["csrf_token"])
+    if(session["user_id"] != user_id):
+        abort(403)
+    
+    return account.delete(
+        session["username"], 
+        user_id,
+        request.form["password"],
+        request.referrer
+    )
+
+@app.route("/reviews/<int:review_id>/delete", methods=["POST"])
+def delete_review(review_id):
+    check_login()
+    check_csrf_token(request.form["csrf_token"])
+    if(session["user_id"] != review_id):
+        abort(403)
+    
+    return reviews.delete(review_id)
