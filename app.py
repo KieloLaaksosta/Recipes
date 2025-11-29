@@ -167,7 +167,5 @@ def delete_user(user_id):
 def delete_review(review_id):
     check_login()
     check_csrf_token(request.form["csrf_token"])
-    if(session["user_id"] != review_id):
-        abort(403)
     
     return reviews.delete(review_id)
