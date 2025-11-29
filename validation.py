@@ -20,7 +20,7 @@ MIN_RECIPE_NAME_LENGTH = 1
 
 
 def limit_lenght(string: str, min_len: int = 0, max_len: int = 65536) -> tuple:
-    if isinstance(string, str) or string is None:
+    if not isinstance(string, str) or string is None:
         return (-2, "")
 
     if len(string) < min_len:
@@ -40,7 +40,7 @@ def truncate_list(values: list, n: int = 255) -> list:
     return values[:n]
 
 def trim_limit_lenght(string: str, n: int) -> str:
-    if isinstance(string, str) is not str or string is None:
+    if not isinstance(string, str) is not str or string is None:
         return None
 
     string = string.strip()
