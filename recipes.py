@@ -31,9 +31,11 @@ def create_recipe_post(recipe_name, ingredients, instructions, tag_ids):
     tag_ids = validation.truncate_list(tag_ids)
 
     if error_msg:
+        tags = database.get_available_tags()
         return render_template(
             "create_recipe.html",
             error_msg=error_msg,
+            available_tags=tags,
             max_name_len=validation.MAX_RECIPE_NAME_LENGTH,
             max_ingredients_len=validation.MAX_INGREDIENTS_LENGTH,
             max_instructions_len=validation.MAX_INSCTRUCTIONS_LENGTH,
@@ -67,7 +69,8 @@ def query_recipes_post(orginal_search: str, filter_tag_ids: list, page: int):
     return render_template(
         "search_recipe.html",
         found_recipes=len(results),
-        recipes=results, available_tags=tags,
+        recipes=results, 
+        available_tags=tags,
         did_search=True,
         search=orginal_search,
         filter_tag_ids=filter_tag_ids,
@@ -82,9 +85,9 @@ def edit_recipe_get(recipe_id: int):
     return render_template(
         "edit_recipe.html",
         recipe_id=recipe_id,
-        tags=tags,
+        available_tags=tags,
         recipe=recipe[0],
-        added_tags=added_tags,
+        added_tags=(tag["TagId"] for tag in added_tags),
         max_name_len=validation.MAX_RECIPE_NAME_LENGTH,
         max_ingredients_len=validation.MAX_INGREDIENTS_LENGTH,
         max_instructions_len=validation.MAX_INSCTRUCTIONS_LENGTH,
@@ -110,6 +113,8 @@ def edit_recipe_post(recipe_id: int, recipe_name: str, instructions: str, ingred
     tags = database.get_available_tags()
 
     recipe = {"Name" : recipe_name, "Instructions": instructions, "Ingredients": ingredients}
+    
+    added_tags = [int(tag) for tag in added_tags]
 
     if not error_msg:
         database.edit_recipe(
@@ -124,10 +129,9 @@ def edit_recipe_post(recipe_id: int, recipe_name: str, instructions: str, ingred
         "edit_recipe.html",
         error_msg=error_msg,
         recipe_id=recipe_id,
-        tags=tags,
-        recipe=recipe,
+        available_tags=tags,
         added_tags=added_tags,
-        added_tag_ids=(tag["TagId"] for tag in tags),
+        recipe=recipe,
         max_name_len=validation.MAX_RECIPE_NAME_LENGTH,
         max_ingredients_len=validation.MAX_INGREDIENTS_LENGTH,
         max_instructions_len=validation.MAX_INSCTRUCTIONS_LENGTH,

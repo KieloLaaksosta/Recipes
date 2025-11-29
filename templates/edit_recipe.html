@@ -27,11 +27,11 @@
     </p>
     <p>
       {% for tag in available_tags %}
-      {% if tag.id in added_tag_ids %}
-      <input type="checkbox" name="tags" value="{{ tag.id }}" checked="checked"/>{{ tag.name }}
-      {% else %}
-      <input type="checkbox" name="tags" value="{{ tag.id }}"/>{{ tag.name }}
-      {% endif %}
+        {% if tag.id in added_tags %}
+          <input type="checkbox" name="tags" value="{{ tag.id }}" checked="checked"/>{{ tag.name }}
+        {% else %}
+          <input type="checkbox" name="tags" value="{{ tag.id }}"/>{{ tag.name }}
+        {% endif %}
       {% endfor %}
     </p>
     <p>
