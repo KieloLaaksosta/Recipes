@@ -16,8 +16,11 @@ def show_lines(content):
     content = content.replace("\n", "<br />")
     return markupsafe.Markup(content)
 
-def check_csfr_token(token):
-    session_token = session.get("csfr_token")
+def check_csrf_token(token):
+    if "csrf_token" not in session:
+        abort(403)
+    
+    session_token = session["csrf_token"]
 
     if not (session_token and token and token == session_token):
         abort(403)
@@ -69,7 +72,7 @@ def create_recipe():
     check_login()
 
     if request.method == "POST":
-        check_csfr_token(request.form["csrf_token"])
+        check_csrf_token(request.form["csrf_token"])
         return recipes.create_recipe_post(
             request.form["recipe_name"],
             request.form["ingredients"],
@@ -106,7 +109,7 @@ def show_user(user_id, recipe_page=0, review_page=0):
 def edit_recipe(recipe_id):
     check_recipe_ownership(recipe_id)
     if request.method == "POST":
-        check_csfr_token(request.form["csrf_token"])
+        check_csrf_token(request.form["csrf_token"])
         return recipes.edit_recipe_post(
             recipe_id,
             request.form["recipe_name"],

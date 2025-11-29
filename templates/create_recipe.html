@@ -12,7 +12,7 @@
     <h2>{{error_msg}}</h2>
   {% endif %}
   <form action="/create_recipe" method="post">
-    <input type="hidden" name="csfr_token" value="{{ session.csfr_token }}" />
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <p>
       Reseptin nimi: <br />
       <input type="text" name="recipe_name" maxlength="{{ max_name_len }}" value="{{ name }}"/>

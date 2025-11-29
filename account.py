@@ -5,6 +5,11 @@ from flask import render_template, redirect, session
 import database
 import validation
 
+def login(username: str):
+    session["username"] = username
+    session["user_id"] = database.get_user_id(username)[0]["Id"]
+    session["csrf_token"] = secrets.token_hex(16)
+
 def try_create_account(username : str, password : str) -> tuple:
     psswd_hash = generate_password_hash(password)
     try:
@@ -68,9 +73,8 @@ def register_post(username: str, password: str, password_again: str, next_page: 
             error_msgs.append(new_error)
 
     if len(error_msgs) == 0:
-        session["username"] = username
-        session["user_id"] = database.get_user_id(username)[0]["Id"]
-        session["csfr_token"] = secrets.token_hex(16)
+        login(username)
+        return redirect(next_page)
 
     return render_template(
         "register.html",
@@ -88,11 +92,8 @@ def login_post(username: str, password: str, next_page: str):
     _, password = validation.limit_lenght(password, validation.MIN_USERNAME_LENGTH, validation.MAX_USERNAME_LENGTH)
 
     if check_password(username, password):
-        session["username"] = username
-        session["user_id"] = database.get_user_id(username)[0]["Id"]
-        session["csfr_token"] = secrets.token_hex(16)
-
-        return redirect("/")
+        login(username)
+        return redirect(next_page)
     return render_template(
         "login.html",
         error_msg="Väärä käyttäjätunnus tai salasana",
@@ -112,7 +113,7 @@ def login_get(next_page: str):
     )
 
 def log_out():
-    del session["username"]
-    del session["user_id"]
-    del session["csfr_token"]
+    session.pop("username", None)
+    session.pop("user_id", None)
+    session.pop("csrf_token", None)
     return redirect("/")
