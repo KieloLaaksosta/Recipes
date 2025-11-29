@@ -23,10 +23,7 @@ def check_csfr_token(token):
         abort(403)
 
 def check_login():
-    if "username" not in session or "user_id" not in session:
-        abort(403)
-    if database.get_user_id(session["username"]) != session["user_id"]:
-        logout() #username doesn't match what's in database. This indicates session tokens aren't synchronized with database. Logout to force new login.
+    if "user_id" not in session:
         abort(403)
 
 def check_recipe_ownership(recipe_id: int):
