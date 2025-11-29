@@ -14,18 +14,12 @@ def show_user(user_id: int, recipe_page: int, review_page: int):
     )
     if len(user_info) < 1:
         return render_template(
-            "user.html",
-            found=False,
-            user_info=None,
-            recipes=None,
-            reviews=None,
-            recipe_page=None,
-            review_page=None,
-            user_id=user_id
+            "not_found.html",
+            error_msg="Käyttäjää ei löytynyt."
         )
+
     return render_template(
         "user.html",
-        found=True,
         user_info=user_info[0],
         recipes=recipes,
         reviews=reviews,
@@ -40,15 +34,10 @@ def show_recipe(recipe_id: int, page: int):
     recipes, tag_names, reviews = database.get_recipe_and_reviews(recipe_id, reviews_per_page * page, reviews_per_page)
     if len(recipes) < 1:
         return render_template(
-            "recipe.html",
-            found=False,
-            RecipeId=None,
-            recipe=None,
-            tag_names=None,
-            recipe_id=None,
-            reviews=None,
-            page=None
+            "not_found.html",
+            error_msg="Reseptiä ei löytynyt."
         )
+
     return render_template(
         "recipe.html",
         found=True,

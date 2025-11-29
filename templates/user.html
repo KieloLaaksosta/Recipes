@@ -7,62 +7,61 @@
 
 <body>
   <p><a href="/">Etusivulle</a></p>
-  {% if found %}
-    <h1>{{user_info.Username}}</h1>
-    <h2>Reseptit</h2>
-    {% if user_info.RecipeCount == 1 %}
-      <p>Käyttäjällä {{user_info.Username}} on yksi resepti</p>
-      {% if user_info.AverageRating %}
-        <p>Käyttäjän saamien arvioiden keskiarvo on {{ user_info.AverageRating | round(2) }}</p>
-      {% endif %}
-    {% elif user_info.RecipeCount == 0 %}
-      <p>Käyttäjä ei ole lisännyt reseptejä.</p>
-    {% else %}
-      <h3>Julkaistuja reseptejä: {{user_info.RecipeCount}}</h3>
+  <h1>{{user_info.Username}}</h1>
+  <h2>Reseptit</h2>
+  {% if user_info.RecipeCount == 1 %}
+    <p>Käyttäjällä {{user_info.Username}} on yksi resepti</p>
+    {% if user_info.AverageRating %}
+      <p>Käyttäjän saamien arvioiden keskiarvo on {{ user_info.AverageRating | round(2) }}</p>
     {% endif %}
-    {% if recipe_page %}
-      <p><a href="/users/{{ user_id }}/{{ recipe_page - 1 }}/{{ review_page }}">Edellinen sivu</a></p>
-    {% endif %}
-    {% if recipes %}
-      <p><a href="/users/{{ user_id }}/{{ recipe_page + 1 }}/{{ review_page }}">Seuraava sivu</a></p>
-    {% endif %}
-    {% for recipe in recipes %}
-      <h3>
-        <a href="/recipes/{{ recipe.RecipeId }}">{{recipe.RecipeName}}</a>
-        {% if session.user_id == user_info.UserId %}
-          <a href="/recipes/{{ recipe.RecipeId }}/edit">Muokkaa</a>
-        {% endif %}
-      </h3>
-    {% endfor %}
-    <h2>Arviot</h2>
-    {% if user_info.ReviewCount == 1 %}
-      <p>Käyttäjä {{user_info.Username}} on antanut yhden arvion.</p>
-    {% elif user_info.ReviewCount == 0 %}
-      <p>Käyttäjä ei ole lisännyt arvioita.</p>
-    {% else %}
-      <h3>Annettuja arviota: {{user_info.ReviewCount}}</h3>
-    {% endif %}
-    {% if review_page %}
-      <p><a href="/users/{{ user_id }}/{{ recipe_page }}/{{ review_page - 1 }}">Edellinen sivu</a></p>
-    {% endif %}
-    {% if reviews %}
-      <p><a href="/users/{{ user_id }}/{{ recipe_page }}/{{ review_page + 1 }}">Seuraava sivu</a></p>
-    {% endif %}
-    {% for review in reviews %}
-      <h3><a href="/recipes/{{ review.RecipeId }}">{{review.RecipeName}}</a> {% if review.Rating %}Arvio: {{review.Rating}}{% endif %}
+  {% elif user_info.RecipeCount == 0 %}
+    <p>Käyttäjä ei ole lisännyt reseptejä.</p>
+  {% else %}
+    <h3>Julkaistuja reseptejä: {{user_info.RecipeCount}}</h3>
+  {% endif %}
+  {% if recipe_page %}
+    <p><a href="/users/{{ user_id }}/{{ recipe_page - 1 }}/{{ review_page }}">Edellinen sivu</a></p>
+  {% endif %}
+  {% if recipes %}
+    <p><a href="/users/{{ user_id }}/{{ recipe_page + 1 }}/{{ review_page }}">Seuraava sivu</a></p>
+  {% endif %}
+  {% for recipe in recipes %}
+    <h3>
+      <a href="/recipes/{{ recipe.RecipeId }}">{{recipe.RecipeName}}</a>
       {% if session.user_id == user_info.UserId %}
-        <a href="/reviews/{{ review.Id }}/edit">Muokkaa</a>
-        <form action="/reviews/{{ review.Id }}/delete" method="post">
-          <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-          <p><input type="submit" value="Poista arvio pysyvästi" /></p>
-        </form>
+        <a href="/recipes/{{ recipe.RecipeId }}/edit">Muokkaa</a>
       {% endif %}
-      </h3>
-    {% endfor %}
+    </h3>
+  {% endfor %}
+  <h2>Arviot</h2>
+  {% if user_info.ReviewCount == 1 %}
+    <p>Käyttäjä {{user_info.Username}} on antanut yhden arvion.</p>
+  {% elif user_info.ReviewCount == 0 %}
+    <p>Käyttäjä ei ole lisännyt arvioita.</p>
+  {% else %}
+    <h3>Annettuja arviota: {{user_info.ReviewCount}}</h3>
+  {% endif %}
+  {% if review_page %}
+    <p><a href="/users/{{ user_id }}/{{ recipe_page }}/{{ review_page - 1 }}">Edellinen sivu</a></p>
+  {% endif %}
+  {% if reviews %}
+    <p><a href="/users/{{ user_id }}/{{ recipe_page }}/{{ review_page + 1 }}">Seuraava sivu</a></p>
+  {% endif %}
+  {% for review in reviews %}
+    <h3><a href="/recipes/{{ review.RecipeId }}">{{review.RecipeName}}</a> {% if review.Rating %}Arvio: {{review.Rating}}{% endif %}
     {% if session.user_id == user_info.UserId %}
       <a href="/reviews/{{ review.Id }}/edit">Muokkaa</a>
     {% endif %}
-  {% else %}
-    <h1>KÄYTTÄJÄÄ EI LÖYTYNYT</h1>
+    </h3>
+  {% endfor %}
+  {% if session.user_id == user_info.UserId %}
+    <form action="/users/{{ user_info.UserId }}/delete" method="post">
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+      <p>
+        Anna salasanasi poistaaksesi tilisi: <br />
+        <input type="text" name="password" maxlength="{{ max_password_len }}" />
+      </p>
+      <p><input type="submit" value="Poista tili pysyvästi" /></p>
+    </form>
   {% endif %}
 </body>

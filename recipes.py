@@ -81,7 +81,13 @@ def query_recipes_post(orginal_search: str, filter_tag_ids: list, page: int):
 def edit_recipe_get(recipe_id: int):
     tags = database.get_available_tags()
     recipe, added_tags = database.get_recipe(recipe_id)
-
+    
+    if len(recipe) < 1:
+        return render_template(
+            "not_found.html",
+            error_msg="Reseptiä ei löytynyt."
+        )
+        
     return render_template(
         "edit_recipe.html",
         recipe_id=recipe_id,
