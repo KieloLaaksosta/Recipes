@@ -130,6 +130,18 @@ def edit_recipe(recipe_id):
         )
     return recipes.edit_recipe_get(recipe_id)
 
+@app.route("/reviews/<int:review_id>/edit", methods=["POST", "GET"])
+def edit_review(review_id):
+    check_review_ownership(review_id)
+    if request.method == "POST":
+        check_csrf_token(request.form["csrf_token"])
+        return reviews.edit_review_post(
+            review_id,
+            request.form["comment"],
+            request.form["rating"]
+        )
+    return reviews.edit_review_get(review_id)
+
 @app.route("/recipes/<int:recipe_id>/delete", methods=["POST"])
 def delete_recipe(recipe_id):
     check_recipe_ownership(recipe_id)

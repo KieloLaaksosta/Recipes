@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Muokkaa arviota</title>
+</head>
+
+<body>
+  <p><a href="/">Etusivulle</a></p>
+  <form action="" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+    <p>
+      Arvio: <br />
+      <input type="range" min="1" max="5" name="rating" value="{{ review.Rating }}" >
+    </p>
+    <p>
+      Kommentti: <br />
+      <textarea rows="10" cols="80" name="comment" maxlength="{{ max_comment_len }}">{{ review.Comment }}</textarea>
+    </p>
+    <input type="submit" value="Tallenna muutokset" />
+  </form>
+  <form>
+    <form action="/reviews/{{ review_id }}/delete" method="post">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+    <p><input type="submit" value="Poista arvio pysyvästi" /></p>
+  </form>
+</body>
+
+</html>

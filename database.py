@@ -416,6 +416,66 @@ def delete_recipe(recipe_id: int):
         )
     finally:
         connection.close()
+        
+#########
+#REVIEWS#
+#########
+
+def add_review(reviewer_id: int, recipe_id: int, rating: int, comment: str):
+    """Inserts a new review for a recipe."""
+    connection = get_connection()
+
+    try:
+        execute(
+            "INSERT INTO Reviews (Id, ReviewerId, RecipeId, Rating, Comment) VALUES (NULL, ?, ?, ?, ?)",
+            [reviewer_id, recipe_id, rating, comment],
+            connection
+        )
+    finally:
+        connection.close()
+
+def get_review(review_id):
+    connection = get_connection()
+
+    try:
+        return query(
+            "SELECT Comment, Rating FROM Reviews WHERE Id = ?",
+            [review_id],
+            connection
+        )
+    finally:
+        connection.close()
+
+def edit_review(review_id: int, comment: str, rating: int):
+    connection = get_connection()
+
+    try:
+        execute(
+            "UPDATE Reviews SET Comment = ?, Rating = ? WHERE Id = ?",
+            [comment, rating, review_id],
+            connection
+        )
+    finally:
+        connection.close()
+
+def get_review_owner_id(review_id: int):
+    connection = get_connection()
+
+    try:
+        return query(
+            """
+            SELECT
+                ReviewerId AS Id
+            FROM
+                Reviews
+            WHERE
+                Id = ?
+            """,
+            [review_id],
+            connection
+        )
+    finally:
+        connection.close()
 
 ######
 #Tags#
