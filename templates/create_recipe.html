@@ -19,11 +19,11 @@
     </p>
     <p>
       Raaka-aineet (esim. 1dl maitoa, 8dl jauhoja): <br />
-      <textarea rows="10" cols="80" name="ingredients" maxlength="{{ max_ingredients_len }}" value="{{ ingredients }}"></textarea>
+      <textarea rows="10" cols="80" name="ingredients" maxlength="{{ max_ingredients_len }}">{{ ingredients }}</textarea>
     </p>
     <p>
       Ohjeet (esim. aseta uuni 200 lämpöön, sekoita kuiva-aineet): <br />
-      <textarea rows="10" cols="80" name="instructions" maxlength="{{ max_instructions_len }}" value="{{ instructions }}"></textarea>
+      <textarea rows="10" cols="80" name="instructions" maxlength="{{ max_instructions_len }}" >{{ instructions }}</textarea>
     </p>
     <p>
       {% for tag in available_tags %}
