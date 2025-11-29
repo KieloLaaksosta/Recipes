@@ -29,10 +29,10 @@ def check_password(username: str, password : str) -> bool:
         return False
     return check_password_hash(password_hash[0]["PasswordHash"], password)
 
-def register_get():
-    return render_template("register.html")
+def register_get(next_page: str):
+    return render_template("register.html", next_page=next_page)
 
-def register_post(username: str, password: str, password_again: str):
+def register_post(username: str, password: str, password_again: str, next_page: str):
     error_code, username = validation.limit_lenght(username, validation.MIN_USERNAME_LENGTH, validation.MAX_USERNAME_LENGTH)
     error_msgs = []
     if validation.contains_whitespace(username):
@@ -62,8 +62,6 @@ def register_post(username: str, password: str, password_again: str):
     if password != password_again:
         error_msgs.append("Salasanat eivät täsmää.")
 
-    print(error_msgs)
-
     if len(error_msgs) == 0:
         new_error = try_create_account(username, password)
         if new_error:
@@ -74,19 +72,18 @@ def register_post(username: str, password: str, password_again: str):
         session["user_id"] = database.get_user_id(username)[0]["Id"]
         session["csfr_token"] = secrets.token_hex(16)
 
-    if len(error_msgs) != 0:
-        return render_template(
-            "register.html",
-            error_msgs=error_msgs,
-            username=username,
-            password=password,
-            password_again=password_again,
-            max_username_len=validation.MAX_USERNAME_LENGTH,
-            max_password_len=validation.MAX_PASSWORD_LENGHT
-        )
-    return redirect("/")
-
-def login_post(username: str, password: str):
+    return render_template(
+        "register.html",
+        error_msgs=error_msgs,
+        username=username,
+        password=password,
+        password_again=password_again,
+        max_username_len=validation.MAX_USERNAME_LENGTH,
+        max_password_len=validation.MAX_PASSWORD_LENGHT,
+        next_page=next_page
+    )
+    
+def login_post(username: str, password: str, next_page: str):
     _, username = validation.limit_lenght(username, validation.MIN_USERNAME_LENGTH, validation.MAX_USERNAME_LENGTH)
     _, password = validation.limit_lenght(password, validation.MIN_USERNAME_LENGTH, validation.MAX_USERNAME_LENGTH)
 
@@ -102,14 +99,16 @@ def login_post(username: str, password: str):
         username=username,
         password=password,
         max_username_len=validation.MAX_USERNAME_LENGTH,
-        max_password_len=validation.MAX_PASSWORD_LENGHT
+        max_password_len=validation.MAX_PASSWORD_LENGHT,
+        next_page=next_page
     )
 
-def login_get():
+def login_get(next_page: str):
     return render_template(
         "login.html",
         max_username_len=validation.MAX_USERNAME_LENGTH,
-        max_password_len=validation.MAX_PASSWORD_LENGHT
+        max_password_len=validation.MAX_PASSWORD_LENGHT,
+        next_page=next_page
     )
 
 def log_out():

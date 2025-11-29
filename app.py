@@ -41,18 +41,24 @@ def register():
         return account.register_post(
             request.form["username"],
             request.form["password"],
-            request.form["password_again"]
+            request.form["password_again"],
+            request.form["next_page"]
         )
-    return account.register_get()
+    
+    next_page_url = request.referrer if request.path != request.referrer else "/"
+    return account.register_get(next_page_url)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         return account.login_post(
             request.form["username"],
-            request.form["password"]
+            request.form["password"],
+            request.form["next_page"]
         )
-    return account.login_get()
+        
+    next_page_url = request.referrer if request.path != request.referrer else "/"
+    return account.login_get(next_page_url)
 
 @app.route("/logout")
 def logout():
