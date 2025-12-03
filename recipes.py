@@ -69,7 +69,7 @@ def query_recipes_post(orginal_search: str, filter_tag_ids: list, page: int):
     return render_template(
         "search_recipe.html",
         found_recipes=len(results),
-        recipes=results, 
+        recipes=results,
         available_tags=tags,
         did_search=True,
         search=orginal_search,
@@ -81,13 +81,13 @@ def query_recipes_post(orginal_search: str, filter_tag_ids: list, page: int):
 def edit_recipe_get(recipe_id: int):
     tags = database.get_available_tags()
     recipe, added_tags = database.get_recipe(recipe_id)
-    
+
     if len(recipe) < 1:
         return render_template(
             "not_found.html",
             error_msg="Reseptiä ei löytynyt."
         )
-        
+
     return render_template(
         "edit_recipe.html",
         recipe_id=recipe_id,
@@ -120,7 +120,7 @@ def edit_recipe_post(recipe_id: int, recipe_name: str, instructions: str, ingred
     tags = database.get_available_tags()
 
     recipe = {"Name" : recipe_name, "Instructions": instructions, "Ingredients": ingredients}
-    
+
     added_tags = [int(tag) for tag in added_tags]
 
     if not error_msg:

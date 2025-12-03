@@ -1,4 +1,4 @@
-import sqlite3 
+import sqlite3
 import secrets
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import render_template, redirect, session
@@ -86,7 +86,7 @@ def register_post(username: str, password: str, password_again: str, next_page: 
         max_password_len=validation.MAX_PASSWORD_LENGHT,
         next_page=next_page
     )
-    
+
 def login_post(username: str, password: str, next_page: str):
     _, username = validation.limit_lenght(username, validation.MIN_USERNAME_LENGTH, validation.MAX_USERNAME_LENGTH)
     _, password = validation.limit_lenght(password, validation.MIN_USERNAME_LENGTH, validation.MAX_USERNAME_LENGTH)

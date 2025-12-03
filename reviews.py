@@ -12,7 +12,7 @@ def create_review_post(rating: int, comment: str, recipe_id: int, page: int):
 
 def edit_review_get(review_id: int):
     review = database.get_review(review_id)
-    
+
     if len(review) < 1:
         return render_template(
             "not_found.html",

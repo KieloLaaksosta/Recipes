@@ -19,7 +19,7 @@ def show_lines(content):
 def check_csrf_token(token):
     if "csrf_token" not in session:
         abort(403)
-    
+
     session_token = session["csrf_token"]
 
     if not (session_token and token and token == session_token):
@@ -33,15 +33,15 @@ def check_recipe_ownership(recipe_id: int):
     check_login()
     recipe = database.get_recipe_owner_id(recipe_id)
     if len(recipe) < 1:
-        abort(404) 
+        abort(404)
     if session["user_id"] != recipe[0]["Id"]:
         abort(403)
-        
+
 def check_review_ownership(review_id: int):
     check_login()
     review = database.get_review_owner_id(review_id)
     if len(review) < 1:
-        abort(404) 
+        abort(404)
     if session["user_id"] != review[0]["Id"]:
         abort(403)
 
@@ -58,7 +58,7 @@ def register():
             request.form["password_again"],
             request.form["next_page"]
         )
-    
+
     next_page_url = request.referrer if request.path != request.referrer else "/"
     return account.register_get(next_page_url)
 
@@ -70,7 +70,7 @@ def login():
             request.form["password"],
             request.form["next_page"]
         )
-        
+
     next_page_url = request.referrer if request.path != request.referrer else "/"
     return account.login_get(next_page_url)
 
@@ -155,9 +155,9 @@ def delete_user(user_id):
     check_csrf_token(request.form["csrf_token"])
     if(session["user_id"] != user_id):
         abort(403)
-    
+
     return account.delete(
-        session["username"], 
+        session["username"],
         user_id,
         request.form["password"],
         request.referrer
@@ -167,5 +167,5 @@ def delete_user(user_id):
 def delete_review(review_id):
     check_login()
     check_csrf_token(request.form["csrf_token"])
-    
+
     return reviews.delete(review_id)

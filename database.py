@@ -416,7 +416,7 @@ def delete_recipe(recipe_id: int):
         )
     finally:
         connection.close()
-        
+
 #########
 #REVIEWS#
 #########
@@ -501,4 +501,3 @@ def delete_review(review_id: int):
         )
     finally:
         connection.close()
-        
