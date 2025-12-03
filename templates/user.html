@@ -3,6 +3,7 @@
 
 <head>
   <title>{{user_info.Username}}</title>
+  <link rel="stylesheet" href="/static/main.css">
 </head>
 
 <body>
@@ -22,9 +23,6 @@
   {% if recipe_page %}
     <p><a href="/users/{{ user_id }}/{{ recipe_page - 1 }}/{{ review_page }}">Edellinen sivu</a></p>
   {% endif %}
-  {% if recipes %}
-    <p><a href="/users/{{ user_id }}/{{ recipe_page + 1 }}/{{ review_page }}">Seuraava sivu</a></p>
-  {% endif %}
   {% for recipe in recipes %}
     <h3>
       <a href="/recipes/{{ recipe.RecipeId }}">{{recipe.RecipeName}}</a>
@@ -33,6 +31,9 @@
       {% endif %}
     </h3>
   {% endfor %}
+  {% if recipes %}
+    <p><a href="/users/{{ user_id }}/{{ recipe_page + 1 }}/{{ review_page }}">Seuraava sivu</a></p>
+  {% endif %}
   <h2>Arviot</h2>
   {% if user_info.ReviewCount == 1 %}
     <p>Käyttäjä {{user_info.Username}} on antanut yhden arvion.</p>
@@ -44,9 +45,6 @@
   {% if review_page %}
     <p><a href="/users/{{ user_id }}/{{ recipe_page }}/{{ review_page - 1 }}">Edellinen sivu</a></p>
   {% endif %}
-  {% if reviews %}
-    <p><a href="/users/{{ user_id }}/{{ recipe_page }}/{{ review_page + 1 }}">Seuraava sivu</a></p>
-  {% endif %}
   {% for review in reviews %}
     <h3><a href="/recipes/{{ review.RecipeId }}">{{review.RecipeName}}</a> {% if review.Rating %}Arvio: {{review.Rating}}{% endif %}
     {% if session.user_id == user_info.UserId %}
@@ -54,6 +52,10 @@
     {% endif %}
     </h3>
   {% endfor %}
+  {% if reviews %}
+    <p><a href="/users/{{ user_id }}/{{ recipe_page }}/{{ review_page + 1 }}">Seuraava sivu</a></p>
+  {% endif %}
+  <hr style="margin-top: 15em;">
   {% if session.user_id == user_info.UserId %}
     <form action="/users/{{ user_info.UserId }}/delete" method="post">
       <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />

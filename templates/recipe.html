@@ -3,6 +3,7 @@
 
 <head>
   <title>{{ recipe.Name }}</title>
+  <link rel="stylesheet" href="/static/main.css">
 </head>
 
 <body>
@@ -32,9 +33,9 @@
       <p><input type="submit" value="Poista resepti pysyvästi" /></p>
     </form>
   {% endif %}
-  <h3>Arvostelut</h3>
+  <h2>Arvostelut</h2>
   {% if session.user_id %}
-    <h2>Arvostele</h2>
+    <h3>Arvostele</h3>
     <form action="" method="POST">
       <input type="hidden" name="recipe_id" value="{{ recipe_id }}" />
       <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />

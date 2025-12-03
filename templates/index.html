@@ -2,23 +2,28 @@
 <html>
 
 <head>
-    <title>Reseptit</title>
+  <title>Reseptit</title>
+  <link rel="stylesheet" href="/static/main.css">
 </head>
 
 <body>
-    <p>
+  <div class="nav">
+    <nav>
+      <ul>
         {% if not session.user_id %}
-        <a href="/register">Luo tunnus</a>
-        <a href="/login">Kirjaudu sisään</a>
+          <li><a href="/register">Luo tunnus</a></li>
+          <li><a href="/login">Kirjaudu sisään</a></li>
         {% else %}
-        <a href="/logout">Kirjaudu ulos</a>
+          <li><a href="/logout">Kirjaudu ulos</a></li>
         {% endif %}
-    </p>
-    {% if session.user_id %}
+      </ul>
+    </nav>
+  </div>
+  {% if session.user_id %}
     <p><a href="/users/{{ session.user_id }}">Oma käyttäjä / {{ session.username }}</a></p>
     <p><a href="/create_recipe">Lisää resepti</a></p>
-    {% endif %}
-    <p><a href="/search_recipe">Hae reseptejä</a></p>
+  {% endif %}
+  <p><a href="/search_recipe">Hae reseptejä</a></p>
 </body>
 
 </html>

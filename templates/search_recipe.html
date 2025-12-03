@@ -3,6 +3,7 @@
 
 <head>
   <title>Etsi reseptejä</title>
+  <link rel="stylesheet" href="/static/main.css">
 </head>
 
 <body>
@@ -14,16 +15,16 @@
       <input type="text" name="search" value="{{ search }}" maxlength="{{ max_search_len }}" />
     </p>
     <h4>Näytä vain respetit joilla on tunnisteet:</h4>
-    <p>
-      {% for tag in available_tags %}
-      {% if tag.id in filter_tag_ids %}
-      <input type="checkbox" name="tags" value="{{ tag.id }}" checked="checked"/>
-      {% else %}
-      <input type="checkbox" name="tags" value="{{ tag.id }}"/>
-      {% endif %}
-      {{ tag.name }}
-      {% endfor %}
-    </p>
+    {% for tag in available_tags %}
+      <div style="display:inline-block;">
+        {% if tag.id in filter_tag_ids %}
+          <input type="checkbox" name="tags" value="{{ tag.id }}" checked="checked"/>
+        {% else %}
+          <input type="checkbox" name="tags" value="{{ tag.id }}"/>
+        {% endif %}
+        {{ tag.name }}
+      </div>
+    {% endfor %}
     <p>
       <input type="submit" value="Hae" />
     </p>
@@ -46,7 +47,7 @@
   </h1>
   {% endfor %}
   <form action="/search_recipe/{{ page + 1}}" method="post">
-    <input type="hidden" name="search" value="{{ search }}" maxlength="{{ max_search_len }}" />
+    <input type="hidden" name="search" value="{{ search }}" maxlength="{{ max_search_len }}" />    
     {% for tag_id in filter_tag_ids %}
       <input type="hidden" name="tags" value="{{ tag_id }}"/>
     {% endfor %}

@@ -353,7 +353,7 @@ def get_recipe_and_reviews(recipe_id: int, offset: int, limit: int):
             connection
         )
 
-        return recipe, (tag["TagName"] for tag in tags), reviews
+        return recipe, [(tag["TagName"] for tag in tags)] if len(tags) > 0 else None, reviews
     finally:
         connection.close()
 

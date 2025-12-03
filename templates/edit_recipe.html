@@ -3,6 +3,7 @@
 
 <head>
   <title>Muokkaa reseptiä</title>
+  <link rel="stylesheet" href="/static/main.css">
 </head>
 
 <body>
@@ -25,15 +26,15 @@
       Ohjeet (esim. aseta uuni 200 lämpöön, sekoita kuiva-aineet): <br />
       <textarea rows="10" cols="80" name="instructions" maxlength="{{ max_instructions_len }}">{{ recipe.Instructions }}</textarea>
     </p>
-    <p>
-      {% for tag in available_tags %}
-        {% if tag.id in added_tags %}
-          <input type="checkbox" name="tags" value="{{ tag.id }}" checked="checked"/>{{ tag.name }}
-        {% else %}
-          <input type="checkbox" name="tags" value="{{ tag.id }}"/>{{ tag.name }}
-        {% endif %}
-      {% endfor %}
-    </p>
+    {% for tag in available_tags %}
+      <div style="display:inline-block;">
+      {% if tag.id in added_tags %}
+        <input type="checkbox" name="tags" value="{{ tag.id }}" checked="checked"/>{{ tag.name }}
+      {% else %}
+        <input type="checkbox" name="tags" value="{{ tag.id }}"/>{{ tag.name }}
+      {% endif %}
+      </div>
+    {% endfor %}
     <p>
       <input type="submit" value="Tallenna muutokset" />
     </p>
