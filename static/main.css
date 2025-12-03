@@ -49,9 +49,11 @@ a {
   font-size: 1.35em;
 }
 
-.left-align {
+.text-box {
   text-align: left;
-  font-size: 1.35em;
+  background-color: aliceblue;
+  border: 3px solid #ebb8ff;
+  padding: 0 0.1em;
 }
 
 .error {

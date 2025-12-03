@@ -14,9 +14,9 @@
     <h3><a href="/recipes/{{ RecipeId }}/edit">Muokkaa</a></h3>
   {% endif %}
   <h3>Raaka-aineet</h3>
-  <p>{{ recipe.Ingredients | show_lines }}</p>
+  <p class="text-box" >{{ recipe.Ingredients | show_lines }}</p>
   <h3>Ohjeet</h3>
-  <p>{{ recipe.Instructions | show_lines }}</p>
+  <p class="text-box" >{{ recipe.Instructions | show_lines }}</p>
   <h4>Tunnisteet</h4>
   <p>
     {% if tag_names %}
