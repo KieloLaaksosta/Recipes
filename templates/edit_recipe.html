@@ -35,13 +35,12 @@
       {% endif %}
       </div>
     {% endfor %}
-    <p>
-      <input type="submit" value="Tallenna muutokset" />
-    </p>
+    <input type="submit" value="Tallenna muutokset" />
   </form>
+  <hr style="margin-top: 15em;">
   <form action="/recipes/{{ RecipeId }}/delete" method="post">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-    <p><input type="submit" value="Poista resepti pysyvästi" /></p>
+    <input type="submit" value="Poista resepti pysyvästi" />
   </form>
 </body>
 

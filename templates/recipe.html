@@ -30,7 +30,7 @@
   {% if session.user_id == recipe.CreatorId%}
     <form action="/recipes/{{ RecipeId }}/delete" method="post">
       <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-      <p><input type="submit" value="Poista resepti pysyvästi" /></p>
+      <input type="submit" value="Poista resepti pysyvästi" />
     </form>
   {% endif %}
   <h2>Arvostelut</h2>
@@ -63,13 +63,13 @@
     {% for review in reviews %}
       <h4><a href="/users/{{review.ReviewerId}}">{{ review.ReviewerName }}</a>: {{ review.Rating }} / 5</h4>
       {% if review.Comment %}
-        <p>{{ review.Comment | show_lines }}</p>
+        <p class="text-box">{{ review.Comment | show_lines }}</p>
       {% endif %}
       {% if session.user_id == review.ReviewerId%}
         <a href="/recipes/{{ review.Id }}/edit">Muokkaa</a>
         <form action="/reviews/{{ review.Id }}/delete" method="post">
           <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-          <p><input type="submit" value="Poista arvio pysyvästi" /></p>
+          <input type="submit" value="Poista arvio pysyvästi" />
         </form>
       {% endif %}
     {% endfor %}

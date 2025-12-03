@@ -25,9 +25,7 @@
         {{ tag.name }}
       </div>
     {% endfor %}
-    <p>
-      <input type="submit" value="Hae" />
-    </p>
+    <input type="submit" value="Hae" />
   </form>
   {% if page %}
   <form action="/search_recipe/{{ page - 1}}" method="post">
@@ -35,23 +33,23 @@
     {% for tag_id in filter_tag_ids %}
       <input type="hidden" name="tags" value="{{ tag_id }}"/>
     {% endfor %}
-    <p><input type="submit" value="Edellinen sivu" /></p>
+    <input type="submit" value="Edellinen sivu" />
   </form>
   {% endif %}
   {% if recipes %}
   {% for recipe in recipes %}
-  <h1>
+  <h4>
     <a href="/recipes/{{recipe.Id}}">{{recipe.Name}}</a> by <a
     href="/users/{{recipe.CreatorId}}">{{recipe.CreatorName}}</a>
     {% if recipe.AverageRating %}Arvio: {{ recipe.AverageRating | round(2) }} {% endif %}
-  </h1>
+  </h4>
   {% endfor %}
   <form action="/search_recipe/{{ page + 1}}" method="post">
     <input type="hidden" name="search" value="{{ search }}" maxlength="{{ max_search_len }}" />    
     {% for tag_id in filter_tag_ids %}
       <input type="hidden" name="tags" value="{{ tag_id }}"/>
     {% endfor %}
-    <p><input type="submit" value="Seuraava sivu" /></p>
+    <input type="submit" value="Seuraava sivu" />
   </form>
   {% else %}
   {% if did_search %}
