@@ -9,8 +9,8 @@
 <body>
   <p><a href="/">Etusivulle</a></p>
   {% if error_msg %}
-  <h1>VIRHE MUUTOSTEN TALLENTAMISESSA</h1>
-  <h2>{{error_msg}}</h2>
+  <h1 class="error">VIRHE MUUTOSTEN TALLENTAMISESSA</h1>
+  <h2 class="error">{{error_msg}}</h2>
   {% endif %}
   <form action="" method="post">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
