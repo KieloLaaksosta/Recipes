@@ -24,11 +24,11 @@
     <p><a href="/create_recipe">Lisää resepti</a></p>
   {% endif %}
   <form action="/" method="post">
-    <p>
+    <label>
       Hakusana (alaviiva [_] hakee mitä tahansa merkkiä ja prosentti merkki [%] miten tahansa monta mitä tahansa
       merkkiä): <br />
       <input type="text" name="search" value="{{ search }}" maxlength="{{ max_search_len }}" />
-    </p>
+    </label>
     <h4>Näytä vain respetit joilla on tunnisteet:</h4>
     {% for tag in available_tags %}
       <div style="display:inline-block;">

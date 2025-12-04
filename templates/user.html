@@ -59,10 +59,10 @@
   {% if session.user_id == user_info.UserId %}
     <form action="/users/{{ user_info.UserId }}/delete" method="post">
       <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-      <p>
+      <label>
         Anna salasanasi poistaaksesi tilisi: <br />
         <input type="text" name="password" maxlength="{{ max_password_len }}" />
-      </p>
+      </label>
       <input type="submit" value="Poista tili pysyvästi" />
     </form>
   {% endif %}

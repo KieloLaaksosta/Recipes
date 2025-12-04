@@ -44,6 +44,12 @@ p {
   font-size: 1.35em;
 }
 
+label {
+  text-align: center;
+  font-size: 1.35em;
+  display: block;
+}
+
 a {
   text-align: center;
   font-size: 1.35em;
@@ -81,6 +87,6 @@ nav li:not(:last-of-type) {
 
 input {
   border: 3px solid #ebb8ff;
-  padding: 10px;
+  padding: 0.75em;
   width: 100%;
 }

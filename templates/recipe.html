@@ -39,14 +39,14 @@
     <form action="" method="POST">
       <input type="hidden" name="recipe_id" value="{{ recipe_id }}" />
       <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-      <p>
+      <label>
         Arvio: <br />
         <input type="range" min="1" max="5" value="1" name="rating">
-      </p>
-      <p>
+      </label>
+      <label>
         Kommentti: <br />
         <textarea rows="10" cols="80" name="comment" maxlength="{{ max_comment_len }}"></textarea>
-      </p>
+      </label>
       <input type="submit" value="Lähetä arostelu" />
     </form>
   {% endif %}

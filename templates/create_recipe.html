@@ -14,18 +14,18 @@
   {% endif %}
   <form action="/create_recipe" method="post">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-    <p>
+    <label>
       Reseptin nimi: <br />
       <input type="text" name="recipe_name" maxlength="{{ max_name_len }}" value="{{ name }}"/>
-    </p>
-    <p>
+    </label>
+    <label>
       Raaka-aineet (esim. 1dl maitoa, 8dl jauhoja): <br />
       <textarea rows="10" cols="80" name="ingredients" maxlength="{{ max_ingredients_len }}">{{ ingredients }}</textarea>
-    </p>
-    <p>
+    </label>
+    <label>
       Ohjeet (esim. aseta uuni 200 lämpöön, sekoita kuiva-aineet): <br />
       <textarea rows="10" cols="80" name="instructions" maxlength="{{ max_instructions_len }}" >{{ instructions }}</textarea>
-    </p>
+    </label>
     {% for tag in available_tags %}
     <div style="display:inline-block;">
       {% if tag.id in added_tags %}

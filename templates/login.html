@@ -18,14 +18,14 @@
     {% else %}
       <input type="hidden" name="next_page" value="/" />
     {% endif %}
-    <p>
+    <label>
       Tunnus: <br />
       <input type="text" name="username" value="{{ username }}" maxlength="{{ max_username_len }}" />
-    </p>
-    <p>
+    </label>
+    <label>
       Salasana: <br />
       <input type="password" name="password" value="{{ password }}" maxlength="{{ max_password_len }}" />
-    </p>
+    </label>
     <input type="submit" value="Kirjaudu sisään" maxlength="{{ max_password_len }}" />
   </form>
 </body>
