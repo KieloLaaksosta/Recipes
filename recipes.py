@@ -49,14 +49,14 @@ def create_recipe_post(recipe_name, ingredients, instructions, tag_ids):
 def search_recipe_get():
     tags = database.get_available_tags()
     return render_template(
-        "search_recipe.html",
+        "index.html",
         available_tags=tags,
         did_search=False,
         max_search_len=validation.MAX_SEARCH_LENGTH,
         page=0
     )
 
-def query_recipes_post(orginal_search: str, filter_tag_ids: list, page: int):
+def show_main_page_with_recipes(orginal_search: str, filter_tag_ids: list, page: int):
     recipes_per_page = 30
 
     tags = database.get_available_tags()
@@ -67,7 +67,7 @@ def query_recipes_post(orginal_search: str, filter_tag_ids: list, page: int):
 
     results = database.query_recipes(search, filter_tag_ids, page * recipes_per_page, recipes_per_page)
     return render_template(
-        "search_recipe.html",
+        "index.html",
         found_recipes=len(results),
         recipes=results,
         available_tags=tags,

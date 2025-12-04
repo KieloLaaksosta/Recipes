@@ -1,4 +1,5 @@
-from flask import Flask, render_template, abort, session, request
+from flask import Flask, render_template, abort, session, request, g
+import time
 import markupsafe
 import config
 import account
@@ -9,6 +10,17 @@ import database
 
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
+
+@app.before_request
+def before_request():
+    g.start_time = time.time()
+
+@app.after_request
+def after_request(response):
+    elapsed_time = round(time.time() - g.start_time, 2)
+    print("elapsed time:", elapsed_time, "s")
+    return response
+
 
 @app.template_filter()
 def show_lines(content):
@@ -45,9 +57,12 @@ def check_review_ownership(review_id: int):
     if session["user_id"] != review[0]["Id"]:
         abort(403)
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+@app.route("/", methods=["GET", "POST"])
+@app.route("/<int:page>", methods=["GET", "POST"])
+def index(page=0):
+    if request.method == "POST":
+        return recipes.show_main_page_with_recipes(request.form["search"], request.form.getlist("tags"), page)
+    return recipes.show_main_page_with_recipes("", [], page)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -91,13 +106,6 @@ def create_recipe():
             request.form.getlist("tags")
         )
     return recipes.create_recipe_get()
-
-@app.route("/search_recipe", methods=["GET", "POST"])
-@app.route("/search_recipe/<int:page>", methods=["POST"])
-def search_recipe(page=0):
-    if request.method == "POST":
-        return recipes.query_recipes_post(request.form["search"], request.form.getlist("tags"), page)
-    return recipes.search_recipe_get()
 
 @app.route("/recipes/<int:recipe_id>", methods=["POST", "GET"])
 @app.route("/recipes/<int:recipe_id>/<int:page>", methods=["POST", "GET"])

@@ -23,7 +23,53 @@
     <p><a href="/users/{{ session.user_id }}">Oma käyttäjä / {{ session.username }}</a></p>
     <p><a href="/create_recipe">Lisää resepti</a></p>
   {% endif %}
-  <p><a href="/search_recipe">Hae reseptejä</a></p>
+  <form action="/" method="post">
+    <p>
+      Hakusana (alaviiva [_] hakee mitä tahansa merkkiä ja prosentti merkki [%] miten tahansa monta mitä tahansa
+      merkkiä): <br />
+      <input type="text" name="search" value="{{ search }}" maxlength="{{ max_search_len }}" />
+    </p>
+    <h4>Näytä vain respetit joilla on tunnisteet:</h4>
+    {% for tag in available_tags %}
+      <div style="display:inline-block;">
+        {% if tag.id in filter_tag_ids %}
+          <input type="checkbox" name="tags" value="{{ tag.id }}" checked="checked"/>
+        {% else %}
+          <input type="checkbox" name="tags" value="{{ tag.id }}"/>
+        {% endif %}
+        {{ tag.name }}
+      </div>
+    {% endfor %}
+    <input type="submit" value="Hae" />
+  </form>
+  {% if page %}
+  <form action="/{{ page - 1}}" method="post">
+    <input type="hidden" name="search" value="{{ search }}" maxlength="{{ max_search_len }}" />
+    {% for tag_id in filter_tag_ids %}
+      <input type="hidden" name="tags" value="{{ tag_id }}"/>
+    {% endfor %}
+    <input type="submit" value="Edellinen sivu" />
+  </form>
+  {% endif %}
+  {% if recipes %}
+    {% for recipe in recipes %}
+    <h4>
+      <a href="/recipes/{{recipe.Id}}">{{recipe.Name}}</a> by <a
+      href="/users/{{recipe.CreatorId}}">{{recipe.CreatorName}}</a>
+      {% if recipe.AverageRating %}Arvio: {{ recipe.AverageRating | round(2) }} {% endif %}
+    </h4>
+    {% endfor %}
+    <form action="/{{ page + 1}}" method="post">
+      <input type="hidden" name="search" value="{{ search }}" maxlength="{{ max_search_len }}" />    
+      {% for tag_id in filter_tag_ids %}
+        <input type="hidden" name="tags" value="{{ tag_id }}"/>
+      {% endfor %}
+      <input type="submit" value="Seuraava sivu" />
+    </form>
+    {% else %}
+    {% if did_search %}
+      <h1>Reseptejä ei löytynt. Kokeile toista hakua. </h1>
+    {% endif %}
+  {% endif %}
 </body>
-
 </html>
