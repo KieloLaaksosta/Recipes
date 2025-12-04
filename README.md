@@ -31,3 +31,22 @@ Voit käynnistää sovelluksen näin:
 ```bash
 $ flask run
 ```
+
+Pylintin antaman tuloksen arvionti on tiedostossa pylint.md 
+
+# Suuri tietomäärä
+
+Sovellustan on testattu seuraavilla määrillä kehitys pavelimella (development build):
+
+    Käyttäjiä: 1000
+    Reseptejä: 100 000
+    Arvosteluja: 1 000 000
+    Tunnisteita (resepteillä keskimäärin 2 tunnistetta): 6
+
+Tällöin haku ilman mitään ehtoja kesti 1.55 s
+
+Haku tunnisteet: tiukkaan budjettiin ja laktoositon ja haku sana "name3" kesti 0.2 s
+
+Käyttäjä sivun hakeminen kesti 1.68 s
+
+Resepti sivun hakeminen oli välitöntä 0.0 s
