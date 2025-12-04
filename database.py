@@ -38,7 +38,6 @@ def query(sql: str, params, connection):
 #######
 
 def add_account(username: str, hashed_password):
-    """Adds a new user account."""
     connection = get_connection()
 
     try:
@@ -51,7 +50,6 @@ def add_account(username: str, hashed_password):
         connection.close()
 
 def get_password(username: str):
-    """Retrieves the hashed password for a given username."""
     connection = get_connection()
 
     try:
@@ -76,8 +74,13 @@ def get_user_id(username: str):
     finally:
         connection.close()
 
-def get_user_view(user_id: int, recipe_offset: int, recipe_limit: int, review_offset: int, review_limit: int) -> tuple:
-    """Retrieves detailed user information, including recipes and reviews."""
+def get_user_view(
+        user_id: int, 
+        recipe_offset: int,
+        recipe_limit: int,
+        review_offset: int,
+        review_limit: int
+    ) -> tuple:
     connection = get_connection()
 
     try:
@@ -100,7 +103,6 @@ def get_user_view(user_id: int, recipe_offset: int, recipe_limit: int, review_of
                 GROUP BY
                     CreatorId
             ) AS R ON R.CreatorId = U.Id
-
             LEFT JOIN (
                 SELECT
                     ReviewerId,
@@ -110,7 +112,6 @@ def get_user_view(user_id: int, recipe_offset: int, recipe_limit: int, review_of
                 GROUP BY
                     ReviewerId
             ) AS SR ON SR.ReviewerId = U.Id
-
             LEFT JOIN (
                 SELECT
                     Recipes.CreatorId,
@@ -352,7 +353,7 @@ def get_recipe_and_reviews(recipe_id: int, offset: int, limit: int):
             [recipe_id, limit, offset],
             connection
         )
-        
+
         print(list((tag["TagName"] for tag in tags)) if len(tags) > 0 else None)
 
         return recipe, [tag["TagName"] for tag in tags] if len(tags) > 0 else None, reviews

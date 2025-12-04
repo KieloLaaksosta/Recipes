@@ -56,7 +56,7 @@ def search_recipe_get():
         page=0
     )
 
-def show_main_page_with_recipes(orginal_search: str, filter_tag_ids: list, page: int):
+def search_recipes(orginal_search: str, filter_tag_ids: list, page: int):
     recipes_per_page = 30
 
     tags = database.get_available_tags()
@@ -100,7 +100,13 @@ def edit_recipe_get(recipe_id: int):
         max_comment_len=validation.MAX_COMMENT_LENGTH
     )
 
-def edit_recipe_post(recipe_id: int, recipe_name: str, instructions: str, ingredients: str, added_tags: list):
+def edit_recipe_post(
+    recipe_id: int,
+    recipe_name: str,
+    instructions: str,
+    ingredients: str,
+    added_tags: list
+    ):
     error_code, recipe_name = validation.limit_lenght(
         recipe_name,
         validation.MIN_RECIPE_NAME_LENGTH,

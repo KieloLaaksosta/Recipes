@@ -24,7 +24,7 @@ for i in range(1, RECIPE_COUNT + 1):
         ["name" + str(i), random.randint(1, USER_COUNT), "instrucitons" + str(i), "ingredients" + str(i)],
         connection
     )
-    
+
     for j in range(1, TAG_COUNT + 1):
         if random.randint(0, 2) == 0:
             database.query(

@@ -1,5 +1,5 @@
-from flask import Flask, render_template, abort, session, request, g
 import time
+from flask import Flask, abort, session, request, g
 import markupsafe
 import config
 import account
@@ -61,8 +61,12 @@ def check_review_ownership(review_id: int):
 @app.route("/<int:page>", methods=["GET", "POST"])
 def index(page=0):
     if request.method == "POST":
-        return recipes.show_main_page_with_recipes(request.form["search"], request.form.getlist("tags"), page)
-    return recipes.show_main_page_with_recipes("", [], page)
+        return recipes.search_recipes(
+            request.form["search"], 
+            request.form.getlist("tags"),
+            page
+        )
+    return recipes.search_recipes("", [], page)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -74,7 +78,10 @@ def register():
             request.form["next_page"]
         )
 
-    next_page_url = request.referrer if request.path != request.referrer else "/"
+    if request.path != request.referrer:
+        next_page_url = request.referrer 
+    else:
+        next_page_url = "/"
     return account.register_get(next_page_url)
 
 @app.route("/login", methods=["GET", "POST"])
@@ -161,7 +168,7 @@ def delete_recipe(recipe_id):
 def delete_user(user_id):
     check_login()
     check_csrf_token(request.form["csrf_token"])
-    if(session["user_id"] != user_id):
+    if session["user_id"] != user_id:
         abort(403)
 
     return account.delete(

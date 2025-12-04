@@ -38,7 +38,12 @@ def register_get(next_page: str):
     return render_template("register.html", next_page=next_page)
 
 def register_post(username: str, password: str, password_again: str, next_page: str):
-    error_code, username = validation.limit_lenght(username, validation.MIN_USERNAME_LENGTH, validation.MAX_USERNAME_LENGTH)
+    error_code, username = validation.limit_lenght(
+        username, 
+        validation.MIN_USERNAME_LENGTH, 
+        validation.MAX_USERNAME_LENGTH
+    )
+
     error_msgs = []
     if validation.contains_whitespace(username):
         error_msgs.append("Käyttäjänimessä ei saa olla välilyöntejä tai rivinvaihtoja.")
@@ -62,7 +67,10 @@ def register_post(username: str, password: str, password_again: str, next_page: 
             case validation.TOO_LONG:
                 error_msgs.append(f"Salasanan tulee olla enintään {validation.MAX_PASSWORD_LENGHT} merkkiä pitkä.")
 
-    _, password_again = validation.limit_lenght(password_again, max_len=validation.MAX_PASSWORD_LENGHT)
+    _, password_again = validation.limit_lenght(
+        password_again,
+        max_len=validation.MAX_PASSWORD_LENGHT
+    )
 
     if password != password_again:
         error_msgs.append("Salasanat eivät täsmää.")
@@ -88,8 +96,16 @@ def register_post(username: str, password: str, password_again: str, next_page: 
     )
 
 def login_post(username: str, password: str, next_page: str):
-    _, username = validation.limit_lenght(username, validation.MIN_USERNAME_LENGTH, validation.MAX_USERNAME_LENGTH)
-    _, password = validation.limit_lenght(password, validation.MIN_USERNAME_LENGTH, validation.MAX_USERNAME_LENGTH)
+    _, username = validation.limit_lenght(
+        username,
+        validation.MIN_USERNAME_LENGTH,
+        validation.MAX_USERNAME_LENGTH
+    )
+    _, password = validation.limit_lenght(
+        password,
+        validation.MIN_USERNAME_LENGTH,
+        validation.MAX_USERNAME_LENGTH
+    )
 
     if check_password(username, password):
         login(username)
