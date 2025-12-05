@@ -39,8 +39,8 @@ def register_get(next_page: str):
 
 def register_post(username: str, password: str, password_again: str, next_page: str):
     error_code, username = validation.limit_lenght(
-        username, 
-        validation.MIN_USERNAME_LENGTH, 
+        username,
+        validation.MIN_USERNAME_LENGTH,
         validation.MAX_USERNAME_LENGTH
     )
 

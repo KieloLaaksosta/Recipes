@@ -62,7 +62,7 @@ def check_review_ownership(review_id: int):
 def index(page=0):
     if request.method == "POST":
         return recipes.search_recipes(
-            request.form["search"], 
+            request.form["search"],
             request.form.getlist("tags"),
             page
         )
@@ -79,7 +79,7 @@ def register():
         )
 
     if request.path != request.referrer:
-        next_page_url = request.referrer 
+        next_page_url = request.referrer
     else:
         next_page_url = "/"
     return account.register_get(next_page_url)

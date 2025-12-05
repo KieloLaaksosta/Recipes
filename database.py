@@ -75,7 +75,7 @@ def get_user_id(username: str):
         connection.close()
 
 def get_user_view(
-        user_id: int, 
+        user_id: int,
         recipe_offset: int,
         recipe_limit: int,
         review_offset: int,
