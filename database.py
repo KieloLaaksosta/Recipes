@@ -193,7 +193,7 @@ def add_recipe(creator, recipe_name: str, ingredients: str, instructions: str, t
             INSERT INTO Recipes (Id, Name, CreatorId, Instructions, Ingredients)
             VALUES (NULL, ?, ?, ?, ?)
             """,
-            [recipe_name, creator, ingredients, instructions],
+            [recipe_name, creator, instructions, ingredients],
             connection
         )
 
