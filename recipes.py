@@ -60,8 +60,10 @@ def search_recipes(orginal_search: str, filter_tag_ids: list, page: int):
     recipes_per_page = 30
 
     tags = database.get_available_tags()
+    
     _, orginal_search = validation.limit_lenght(orginal_search, max_len=validation.MAX_SEARCH_LENGTH)
     filter_tag_ids = validation.truncate_list(filter_tag_ids)
+    filter_tag_ids = [int(tag) for tag in filter_tag_ids]
 
     search = '%'+'%'.join(orginal_search.split(' '))+'%'
 

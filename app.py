@@ -61,6 +61,7 @@ def check_review_ownership(review_id: int):
 @app.route("/<int:page>", methods=["GET", "POST"])
 def index(page=0):
     if request.method == "POST":
+        print(request.form.getlist("tags"))
         return recipes.search_recipes(
             request.form["search"],
             request.form.getlist("tags"),
