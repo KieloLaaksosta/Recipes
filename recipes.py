@@ -95,7 +95,7 @@ def edit_recipe_get(recipe_id: int):
         recipe_id=recipe_id,
         available_tags=tags,
         recipe=recipe[0],
-        added_tags=(tag["TagId"] for tag in added_tags),
+        added_tags=list((tag["TagId"] for tag in added_tags)),
         max_name_len=validation.MAX_RECIPE_NAME_LENGTH,
         max_ingredients_len=validation.MAX_INGREDIENTS_LENGTH,
         max_instructions_len=validation.MAX_INSTRUCTIONS_LENGTH,
